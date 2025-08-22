@@ -7,3 +7,5 @@ class HumanAgent(Agent):
         """Initialize agent with auction environment"""
         super().initialize(listone, slots, initial_credits, num_participants)
 
+    def make_offer_decision(self, current_player, current_price, highest_bidder, player_list, other_agents) -> str:
+        pass

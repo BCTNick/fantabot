@@ -13,6 +13,7 @@ from src.agents.agent_class import RandomAgent
 from src.agents.cap_based_agent import CapAgent
 from src.agents.dynamic_cap_based_agent import DynamicCapAgent
 from src.agents.rl_deep_agent import RLDeepAgent
+from src.agents.human_agent import HumanAgent
 
 # Import auction, model and data loader
 from src.auction import Auction
@@ -39,14 +40,14 @@ logger = logging.getLogger()
 
 # Create the characteristics of the auction
 agents = [
-        CapAgent(agent_id="cap_bestx1_balanced", cap_strategy="bestxi_based"),
-        CapAgent(agent_id="cap_bestx1_aggressive", cap_strategy="bestxi_based", bestxi_budget=0.99),
-        CapAgent(agent_id="cap_tier", cap_strategy="tier_based"),
-        DynamicCapAgent(agent_id="dynamic_cap_bestx1_balanced", cap_strategy="bestxi_based", bestxi_budget=0.95),
-        DynamicCapAgent(agent_id="dynamic_cap_bestx1_aggressive", cap_strategy="bestxi_based", bestxi_budget=0.99),
-        DynamicCapAgent(agent_id="dynamic_cap_tier", cap_strategy="tier_based"),
-        RLDeepAgent(agent_id="RLDEEPAGENT", mode = "training"),
-        RandomAgent(agent_id="random_1")
+        HumanAgent(agent_id="cucco"),
+        HumanAgent(agent_id="andrea"),
+        CapAgent(agent_id="noi"),
+        HumanAgent(agent_id="gg pace"),
+        HumanAgent(agent_id="davide"),
+        HumanAgent(agent_id="tommi"),
+        HumanAgent(agent_id="cantiello"),
+        HumanAgent(agent_id="miky")
     ]
 random.shuffle(agents) 
 
