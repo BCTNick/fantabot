@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy Football Auction - Live Auction</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <h1>⚽ Fantasy Football Auction</h1>
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link active">Live Auction</a>
+            <a href="teams.html" class="nav-link">Teams</a>
+        </div>
+        <div class="connection-status" id="connectionStatus">
+            <span class="status-indicator offline"></span>
+            <span class="status-text">Connecting...</span>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Auction Controls -->
+        <div class="auction-controls">
+            <button id="startAuction" class="btn btn-primary">Start Auction</button>
+            <select id="auctionType" class="select">
+                <option value="random">Random Order</option>
+                <option value="listone">Alphabetical</option>
+                <option value="chiamata">By Evaluation</option>
+            </select>
+            <label class="checkbox">
+                <input type="checkbox" id="perRuolo" checked>
+                <span class="checkmark"></span>
+                Auction by Role
+            </label>
+        </div>
+
+        <!-- Current Auction Display -->
+        <div class="auction-display">
+            <div class="player-card" id="playerCard">
+                <div class="player-info">
+                    <h2 class="player-name" id="playerName">Waiting for auction...</h2>
+                    <div class="player-details">
+                        <span class="player-role" id="playerRole"></span>
+                        <span class="player-evaluation" id="playerEvaluation"></span>
+                    </div>
+                </div>
+                <div class="player-image">
+                    <div class="player-avatar" id="playerAvatar">⚽</div>
+                </div>
+            </div>
+
+            <div class="auction-info">
+                <div class="price-display">
+                    <h3>Current Price</h3>
+                    <div class="price" id="currentPrice">€0</div>
+                </div>
+                
+                <div class="bidder-info">
+                    <h3>Highest Bidder</h3>
+                    <div class="bidder" id="highestBidder">None</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auction Phase Indicator -->
+        <div class="phase-indicator" id="phaseIndicator">
+            <div class="phase-status" id="phaseStatus">Waiting to start</div>
+            <div class="phase-progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+
+        <!-- Live Activity Feed -->
+        <div class="activity-feed">
+            <h3>Live Activity</h3>
+            <div class="activity-list" id="activityList">
+                <div class="activity-item">
+                    <span class="activity-time">--:--</span>
+                    <span class="activity-text">Waiting for auction to start...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auction Summary -->
+        <div class="auction-summary">
+            <h3>Recent Sales</h3>
+            <div class="sales-list" id="salesList">
+                <div class="sale-item">
+                    <span class="sale-text">No sales yet</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="auction.js"></script>
+</body>
+</html>

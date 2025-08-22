@@ -1,0 +1,34 @@
+
+⚙️ AUCTION CONFIGURATION
+----------------------------------------
+📊 Slots per team:
+  GK: 3
+  DEF: 8
+  MID: 8
+  ATT: 6
+💰 Initial credits per agent: 1000
+👥 Number of agents: 8
+📋 Total players available: 513
+  Auction type: chiamata
+  Per role: True
+
+🤖 AGENT CONFIGURATIONS
+----------------------------------------
+  cap_bestx1_aggressive: CapAgent (strategy: bestxi_based)
+  cap_bestx1_balanced: CapAgent (strategy: bestxi_based)
+  dynamic_cap_bestx1_aggressive: DynamicCapAgent
+  RLDEEPAGENT: RLDeepAgent
+  cap_tier: CapAgent (strategy: tier_based)
+  random_1: RandomAgent
+  dynamic_cap_bestx1_balanced: DynamicCapAgent
+  dynamic_cap_tier: DynamicCapAgent
+🏁 AUCTION SIMULATION STARTED
+📅 Timestamp: 2025-08-18 12:59:59
+============================================================
+
+🏈 STARTING GK AUCTIONS
+
+🏆 AUCTION START: Meret (GK) - Evaluation: 92
+  💰 cap_bestx1_aggressive bids 1
+  💰 cap_bestx1_balanced bids 2
+  💰 dynamic_cap_bestx1_aggressive bids 3

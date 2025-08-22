@@ -1,0 +1,2 @@
+# WebSocket server requirements
+websockets>=11.0
