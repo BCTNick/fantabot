@@ -185,16 +185,6 @@ const LiveAuction: React.FC<LiveAuctionProps> = ({
     }
   }, [auctionLogs]);
 
-  const getRoleColor = (role: string) => {
-    const colors: { [key: string]: string } = {
-      'GK': 'bg-yellow-100 text-yellow-800',
-      'DEF': 'bg-blue-100 text-blue-800',
-      'MID': 'bg-green-100 text-green-800',
-      'ATT': 'bg-red-100 text-red-800'
-    };
-    return colors[role] || 'bg-gray-100 text-gray-800';
-  };
-
   const getStateColor = (state: string) => {
     const colors: { [key: string]: string } = {
       'running': 'bg-green-100 text-green-800',
@@ -217,21 +207,23 @@ const LiveAuction: React.FC<LiveAuctionProps> = ({
     return '📝';
   };
 
-  const getAgentName = (agentId: string) => {
-    console.log('getAgentName called with:', agentId, 'type:', typeof agentId);
-    console.log('valid_human_agents:', liveState?.valid_human_agents);
+  const getAgentName = (agentId: string | number) => {
+    // Converte sempre a stringa
+    const agentIdStr = String(agentId);
     
     // Se abbiamo la lista degli agenti umani validi, cerchiamo il nome
     if (liveState?.valid_human_agents) {
-      const agent = liveState.valid_human_agents.find(a => a.id === agentId);
-      console.log('Found agent:', agent);
+      const agent = liveState.valid_human_agents.find(a => a.id === agentIdStr);
       if (agent) return agent.name;
     }
     
-    // Converte a stringa se è un numero
-    const agentIdStr = String(agentId);
+    // Fallback: usa direttamente l'ID come nome
+    // Se è un numero, lo ritorna come stringa
+    // Se contiene underscore, li sostituisce con spazi e capitalizza
+    if (/^\d+$/.test(agentIdStr)) {
+      return `Agente ${agentIdStr}`;
+    }
     
-    // Fallback: rimuovi prefissi comuni e formatta l'ID
     return agentIdStr
       .replace(/^(agent_|human_)/i, '') // Rimuovi prefissi
       .replace(/_/g, ' ') // Sostituisci underscore con spazi
@@ -248,7 +240,7 @@ const LiveAuction: React.FC<LiveAuctionProps> = ({
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">🏆 Asta Live</h1>
-              <p className="text-sm text-gray-500 font-mono">{auctionId}</p>
+              <p className="text-sm text-gray-700 font-mono">{auctionId}</p>
             </div>
             <div className="flex items-center space-x-3">
               {liveState && (
@@ -290,7 +282,7 @@ const LiveAuction: React.FC<LiveAuctionProps> = ({
                 <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-4">
                   <div className="flex items-center justify-between">
                     <h2 className="text-xl font-bold text-white">🏈 Giocatore in Asta</h2>
-                    <span className={`px-4 py-2 rounded-full text-sm font-bold bg-white shadow-sm ${getRoleColor(liveState.current_player.role).replace('bg-', 'text-').replace('text-', 'text-')}`}>
+                    <span className="px-4 py-2 rounded-full text-sm font-bold bg-white shadow-sm text-gray-800">
                       {liveState.current_player.role}
                     </span>
                   </div>
@@ -453,7 +445,7 @@ const LiveAuction: React.FC<LiveAuctionProps> = ({
               
               <div ref={logsContainerRef} className="h-[600px] overflow-y-auto">
                 {auctionLogs.length === 0 ? (
-                  <div className="flex items-center justify-center h-full text-gray-500 p-8">
+                  <div className="flex items-center justify-center h-full text-gray-700 p-8">
                     <div className="text-center">
                       <div className="text-6xl mb-4">🏁</div>
                       <p className="text-lg font-medium">In attesa di eventi...</p>
@@ -470,7 +462,7 @@ const LiveAuction: React.FC<LiveAuctionProps> = ({
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between mb-1">
-                              <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                              <span className="text-xs font-medium text-gray-700 bg-gray-100 px-2 py-1 rounded">
                                 {new Date(log.timestamp * 1000).toLocaleTimeString('it-IT')}
                               </span>
                               {log.level && (
