@@ -38,7 +38,7 @@ interface AuctionResult {
 function App() {
   const [agentTypes, setAgentTypes] = useState<AgentType[]>([]);
   const [auctionConfig, setAuctionConfig] = useState<AuctionConfig>({
-    num_agents: 4,
+    num_agents: 8,
     initial_budget: 500,
     auction_type: 'mixed',
     num_players: 25,
@@ -61,10 +61,13 @@ function App() {
       
       // Initialize with default agents (include human agent)
       const defaultAgents: AgentConfig[] = [
-        { name: 'Human Player', type: 'human' },
-        { name: 'Agent 1', type: 'cap', strategy: 'conservative' },
-        { name: 'Agent 2', type: 'cap', strategy: 'aggressive' },
-        { name: 'Agent 3', type: 'dynamic_cap' }
+        { name: 'Cucco', type: 'human' },
+        { name: 'Michele', type: 'human' },
+        { name: 'Andrea', type: 'human' },
+        { name: 'Domenico', type: 'human' },
+        { name: 'Luca', type: 'human' },
+        { name: 'Franco', type: 'human' },
+        { name: 'NOI', type: 'cap', strategy: 'aggressive' },
       ];
       
       setAuctionConfig(prev => ({ ...prev, agents: defaultAgents }));

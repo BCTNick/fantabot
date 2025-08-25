@@ -251,14 +251,14 @@ const LiveAuction: React.FC<LiveAuctionProps> = ({
               {!isAuctionRunning ? (
                 <button
                   onClick={onStart}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  className="text-black px-4 py-2 bg-green-600  rounded-lg hover:bg-green-700 transition-colors"
                 >
                   🚀 Avvia Asta
                 </button>
               ) : (
                 <button
                   onClick={onStop}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  className="px-4 py-2 text-black bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
                 >
                   ⏹️ Stop
                 </button>
@@ -332,9 +332,17 @@ const LiveAuction: React.FC<LiveAuctionProps> = ({
                     <p className="text-sm font-semibold text-gray-700 mb-3">Agenti disponibili per l'offerta:</p>
                     <div className="flex flex-wrap gap-2">
                       {liveState.valid_human_agents.map(agent => (
-                        <span key={agent.id} className="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium border border-blue-200">
+                        <button 
+                          key={agent.id} 
+                          onClick={() => setSelectedAgent(agent.id)}
+                          className={`px-4 py-2 rounded-full text-sm font-medium border transition-all duration-200 hover:scale-105 hover:shadow-md ${
+                            selectedAgent === agent.id 
+                              ? 'bg-blue-600 text-black border-blue-600 shadow-lg' 
+                              : 'bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-200'
+                          }`}
+                        >
                           {agent.name}
-                        </span>
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -379,7 +387,6 @@ const LiveAuction: React.FC<LiveAuctionProps> = ({
                       
                       <button 
                         onClick={submitHumanPass}
-                        disabled={!selectedAgent}
                         className="px-6 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-lg hover:from-gray-700 hover:to-gray-800 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-200 font-semibold shadow-lg"
                       >
                         ⏭️ Passa
@@ -433,11 +440,11 @@ const LiveAuction: React.FC<LiveAuctionProps> = ({
 
           {/* Right Column - Logs */}
           <div className="flex-1 lg:w-1/2">
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden h-full">
+            <div className="h-min bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden h-full">
               <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4">
                 <h3 className="text-xl font-bold text-white flex items-center">
                   📋 Log Live dell'Asta
-                  <span className="ml-auto bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">
+                  <span className="ml-auto bg-white text-black bg-opacity-20 px-3 py-1 rounded-full text-sm">
                     {auctionLogs.length} eventi
                   </span>
                 </h3>
