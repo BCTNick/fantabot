@@ -1,10 +1,12 @@
 # Import NN stuff
+from collections import deque
 from venv import logger
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import random 
 import copy
+from model_rl_deep_agent.model import Linear_QNet, QTrainer
 
 # Data 
 import numpy as np
@@ -19,11 +21,32 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from agents.agent_class import Agent
 from models import Player, Squad, Slots
 
+batch_size = 64
+lr = 0.001
+
+
 class RLDeepAgent(Agent):
     def __init__(self, agent_id, mode: str = "inference"):
         super().__init__(mode)
         self.mode = mode
         self.agent_id = agent_id
+
+        # Concerning the model
+        self.n_auctions = 0
+        self.epsilon = 0  
+        self.gamma = 0.9 
+        self.memory = deque(maxlen=100000)
+        
+        # Calculate input size:
+        # 3 base features (auction_progress, player_eval, price)
+        # + 12 highest bidder one-hot encoding 
+        # + 3 self features (credits, bestxi_eval, squad_eval)
+        # + 11 other agents * 3 features each = 33
+        # Total: 3 + 12 + 3 + 33 = 51
+        self.input_size = 51
+        
+        self.model = Linear_QNet(input_size=self.input_size, hidden_size=256, output_size=1)
+        self.trainer = QTrainer(model=self.model, lr=lr, gamma=self.gamma)
 
     def initialize(self, players: List[Player], slots: Slots, initial_credits: int, num_participants: int):
         """Initialize the agent for auction"""
@@ -39,34 +62,17 @@ class RLDeepAgent(Agent):
         best_players_overall = sorted(players, key=lambda p: p.evaluation, reverse=True)[:best_players_count]
         self.sum_best_overall = sum(p.standardized_evaluation for p in best_players_overall)
 
-    def get_auction_progress(self, agents: List[Agent],updated_player_list: List[Player]) -> float:
+    def get_auction_progress(self, other_agents: List[Agent],updated_player_list: List[Player]) -> float:
 
         # TODO : understand if the to, t1 makes sense in this function
         # Get the sum of the players evaluation of every squads' agent 
         squad_evaluations = 0
-        for agent in agents + [self]:
+        for agent in other_agents + [self]:
             squad_evaluations += agent.squad.objective(bestxi=False, standardized=True)
 
         auction_progress = squad_evaluations / self.sum_best_overall 
 
         return auction_progress
-
-
-    # def get_remaining_players_value(self, updated_player_list: List[Player], mode: chr = "t0") -> float:
-        
-    #     if mode == "t0":
- 
-    #         # Get available players (fantasy_team is None) and take the best [self.best_players_count] of them
-    #         available_players = [p for p in updated_player_list if p.fantasy_team is None]
-    #         best_available_players = sorted(available_players,
-    #                                     key=lambda p: p.evaluation, reverse=True)[:self.best_players_count]
-    #         sum_best_available = sum(p.evaluation for p in best_available_players)
-            
-    #         # Return ratio (avoid division by zero)
-    #         if self.sum_best_overall == 0:
-    #             return 1.0
-            
-    #         return sum_best_available / self.sum_best_overall
 
     def get_score(self, agent: Agent, agents: List[Agent], updated_player_list: List[Player]) -> float:
         
@@ -167,14 +173,67 @@ class RLDeepAgent(Agent):
         return state
 
     def nn(self, current_player: Player, current_price: int, highest_bidder: str, updated_player_list: List[Player], other_agents: List[Agent]) -> str:
-        return "offer_+1" if random.random() < 0.5 else "no_offer"
+        # Create one-hot encoding for highest bidder (12 positions: self + 11 others)
+        highest_bidder_encoding = [0.0] * 12
+        
+        if highest_bidder == self.agent_id:
+            highest_bidder_encoding[0] = 1.0  # Self is position 0
+        elif highest_bidder:
+            # Find the position of the highest bidder in other_agents
+            for i, agent in enumerate(other_agents):
+                if agent.agent_id == highest_bidder:
+                    highest_bidder_encoding[i + 1] = 1.0  # Other agents start at position 1
+                    break
+        # If no highest bidder or bidder not found, all remain 0
+        
+        # Build base features (current auction state)
+        base_features = [
+            self.auction_progress,
+            current_player.standardized_evaluation,
+            current_price / self.initial_credits,  
+        ]
+        
+        # Add highest bidder one-hot encoding
+        base_features.extend(highest_bidder_encoding)
+        
+        # Add self features
+        base_features.extend([
+            self.current_credits / self.initial_credits,
+            self.squad.objective(bestxi=True, standardized=True),
+            self.squad.objective(bestxi=False, standardized=True),
+        ])
+        
+        # Build other agents features with padding
+        other_agent_features = []
+        for i in range(11):  # 11 other agents max
+            if i < len(other_agents):
+                agent = other_agents[i]
+                other_agent_features.extend([
+                    agent.current_credits / agent.initial_credits,
+                    agent.squad.objective(bestxi=True, standardized=True),
+                    agent.squad.objective(bestxi=False, standardized=True),
+                ])
+            else:
+                # Padding with zeros for non-existent agents
+                other_agent_features.extend([0.0, 0.0, 0.0])
+        
+        # Combine all features
+        all_features = base_features + other_agent_features
+        
+        input_tensor = torch.tensor(all_features, dtype=torch.float32)
+        
+        probability = self.model.forward(input_tensor)
+        return "offer_+1" if probability > 0.5 else "no_offer"
 
     def get_reward(self, state_t0: np.ndarray, state_t1: np.ndarray, action: str) -> float:
         return state_t1 / state_t0 - 1
 
     def make_offer_decision(self, current_player: Player, current_price: int, highest_bidder: str, player_list: List[Player], other_agents: List[Agent]) -> str:
 
-        # Use the RL model to predict the action
+        # Get the auction progress (current player not included)
+        self.auction_progress = self.get_auction_progress(other_agents, player_list)
+
+        # Get the action from the model
         action = self.nn(current_player, current_price, highest_bidder, player_list, other_agents)
 
         # update the model if on training 
