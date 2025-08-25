@@ -20,10 +20,9 @@ from agents.agent_class import Agent
 from models import Player, Squad, Slots
 
 class RLDeepAgent(Agent):
-    def __init__(self, agent_id, mode: str = "inference"):
-        super().__init__(mode)
+    def __init__(self, agent_id, name: str = None, mode: str = "inference"):
+        super().__init__(agent_id, name)
         self.mode = mode
-        self.agent_id = agent_id
 
     def initialize(self, players: List[Player], slots: Slots, initial_credits: int, num_participants: int):
         """Initialize the agent for auction"""

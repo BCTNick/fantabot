@@ -7,8 +7,9 @@ from typing import List
 from src.models import Player, Slots, Squad
 
 class Agent:
-    def __init__(self, agent_id: str, initial_credits: int = 1000, slots: Slots = None, _squad: List[Player] = None):
+    def __init__(self, agent_id: str, name: str = None, initial_credits: int = 1000, slots: Slots = None, _squad: List[Player] = None):
         self.agent_id = agent_id
+        self.name = name or agent_id  # Use name if provided, otherwise fallback to agent_id
         self.current_credits = initial_credits
         self.initial_credits = initial_credits
         self.slots = slots if slots is not None else Slots()

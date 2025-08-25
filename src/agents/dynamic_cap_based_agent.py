@@ -7,8 +7,8 @@ from src.models import Player, Squad, Slots
 from typing import List
 
 class DynamicCapAgent(Agent):
-    def __init__(self, agent_id: str, cap_strategy: str = "bestxi_based", bestxi_budget: float = 0.95):
-        super().__init__(agent_id)
+    def __init__(self, agent_id: str, name: str = None, cap_strategy: str = "bestxi_based", bestxi_budget: float = 0.95):
+        super().__init__(agent_id, name)
         self.cap_strategy = cap_strategy
         self.bestxi_budget = bestxi_budget
         self.listone = {}  # Will be filled during initialize
