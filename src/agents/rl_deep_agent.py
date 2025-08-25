@@ -79,9 +79,9 @@ class RLDeepAgent(Agent):
         # remaining_players_value = agent.get_remaining_players_value(updated_player_list) #Maybe its useless
 
         # Dynamic weights based on auction stage
-        w_e = 0.30 + 0.3 * auction_progress  # team value matters more when good players are finishing
-        w_c = 0.45 - 0.3 * auction_progress  # credits matter less when good players are finishing
-        w_s = 0.25 - 0.3 * auction_progress  # slots matter less when good players are finishing
+        w_e = 0.2 + 0.7 * auction_progress  # team value matters more when good players are finishing
+        w_c = 0.5 - 0.5 * auction_progress  # credits matter less when good players are finishing
+        w_s = 0.1 - 0.1 * auction_progress  # slots matter less when good players are finishing
         
         # Normalize weights just in case floating point errors occur
         total_w = w_c + w_e + w_s
@@ -103,7 +103,7 @@ class RLDeepAgent(Agent):
 
             scores.append(my_score)
 
-            state = (my_score - np.mean(scores)) / np.std(scores)
+            state = (my_score - np.mean(scores)) / np.std(scores) if np.std(scores) != 0 else 0
 
         elif mode == "t1":  
             # Create temporary copies for simulation without affecting real auction
@@ -179,26 +179,30 @@ class RLDeepAgent(Agent):
 
         # update the model if on training 
         if self.mode == "training":
-        # get the state of the agent compared to other partecipants before the auction of the current player 
+            # get the state of the agent compared to other partecipants before the auction of the current player 
             state_t0 = self.get_state(action, current_player, current_price, highest_bidder, player_list, other_agents, mode = "t0")
 
-            # get the state of the 
+            # get the state of the agent after the auction
             state_offer = self.get_state("offer+1", current_player, current_price, highest_bidder, player_list, other_agents, mode = "t1")
             state_no_bid = self.get_state("no_offer", current_player, current_price, highest_bidder, player_list, other_agents, mode = "t1")
 
-
-            reward = self.get_reward(state_t0, state_offer, action)
-            logger.info(f"  State0: {state_t0}")
-            logger.info(f"  State1 +1: {state_offer}")
-            logger.info(f"  State1 no_bid: {state_no_bid}")
-
-            logger.info(f"  Reward RLDEEPAGENT: {reward}")
-
+            # Compare future states to determine action
             if state_offer > state_no_bid:
                 action = "offer_+1"
             
             else:
                 action = "no_offer"
+
+
+            # reward = self.get_reward(state_t0, state_offer, action)
+
+            logger.info(f"  State0: {state_t0}")
+            logger.info(f"  State1 +1: {state_offer}")
+            logger.info(f"  State1 no_bid: {state_no_bid}")
+
+            # logger.info(f"  Reward RLDEEPAGENT: {reward}")
+
+
             # TODO:  Store everything to send at the training function at the end of the auction
 
         return action

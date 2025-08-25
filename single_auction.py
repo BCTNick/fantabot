@@ -40,14 +40,14 @@ logger = logging.getLogger()
 
 # Create the characteristics of the auction
 agents = [
-        HumanAgent(agent_id="cucco"),
-        HumanAgent(agent_id="andrea"),
-        CapAgent(agent_id="noi"),
-        HumanAgent(agent_id="gg pace"),
-        HumanAgent(agent_id="davide"),
-        HumanAgent(agent_id="tommi"),
-        HumanAgent(agent_id="cantiello"),
-        HumanAgent(agent_id="miky")
+        CapAgent(agent_id="cap_bestx1_balanced", cap_strategy="bestxi_based"),
+        CapAgent(agent_id="cap_bestx1_aggressive", cap_strategy="bestxi_based", bestxi_budget=0.99),
+        CapAgent(agent_id="cap_tier", cap_strategy="tier_based"),
+        DynamicCapAgent(agent_id="dynamic_cap_bestx1_balanced", cap_strategy="bestxi_based", bestxi_budget=0.95),
+        DynamicCapAgent(agent_id="dynamic_cap_bestx1_aggressive", cap_strategy="bestxi_based", bestxi_budget=0.99),
+        DynamicCapAgent(agent_id="dynamic_cap_tier", cap_strategy="tier_based"),
+        RLDeepAgent(agent_id="RLDeepAgent", mode = "training"),
+        RandomAgent(agent_id="random_1")
     ]
 random.shuffle(agents) 
 
@@ -128,21 +128,32 @@ for agent in auction.agents:
     logger.info("")
     logger.info("="*60)
 
+# Only put the score if you have an RLDeepAgent
+rldeep = None
+for agent in agents:
+    if isinstance(agent, RLDeepAgent):
+        rldeep = agent
 
 for agent in agents:
+
     logger.info(f"\n🏆 TEAM: {agent.agent_id.upper()}")
     logger.info("-" * 50)
-            # Calculate squad objectives
+    
+    # Calculate squad objectives
     total_eval = agent.squad.objective(standardized=False)
     total_std_eval = agent.squad.objective(standardized=True)
     bestxi_eval = agent.squad.objective(bestxi=True, standardized=False)
     bestxi_std_eval = agent.squad.objective(bestxi=True, standardized=True)
-            # Log summary metrics
+    if rldeep:
+        score = rldeep.get_score(agent, agents, auction.players)
+    
+    # Log summary metrics
     logger.info("\n📈 SQUAD METRICS:")
     logger.info(f"  Total Squad Evaluation: {total_eval}")
     logger.info(f"  Total Squad Standardized: {total_std_eval:.3f}")
     logger.info(f"  Best XI Evaluation: {bestxi_eval}")
     logger.info(f"  Best XI Standardized: {bestxi_std_eval:.3f}")
+    logger.info(f"  Score: {score if rldeep else 'N/A'}")
     logger.info(f"  Credits Remaining: {agent.current_credits}")
     logger.info(f"  Total Credits Spent: {1000 - agent.current_credits}")
     logger.info("")

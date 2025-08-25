@@ -108,40 +108,48 @@ class Auction:
 
         while True:
 
+            # This loops automatic agents
             self.loop_automatic_agents()
 
-            # Control for manual bidding agent
-            while True:
-                agent_id = input("Chi vuole offrire? ")
-                # Check if input is either "nessuno" or a valid agent ID
-                valid_agent_ids = [agent.agent_id for agent in self.agents]
-                if agent_id == "nessuno" or agent_id in valid_agent_ids:
-                    break
-                else: 
-                    print("ID non valido. Riprova.")
+            # If there is at least one human agent, add the manual bidding #TODO: also add a mode for manual bidding
+            if any(isinstance(agent, HumanAgent) for agent in self.agents):
 
-            if agent_id == "nessuno":
-                break
-
-            # Get the agent object for validation
-            bidding_agent = next(agent for agent in self.agents if agent.agent_id == agent_id)
-            
-            # Control for manual offer
-            while True:
-                try:
-                    offerta = int(input("Quanto offre? "))
-                    # Check if the offer is valid using the modified can_participate_in_bid function
-                    if self.can_participate_in_bid(agent=bidding_agent, offer_price=offerta, 
-                                                 position=player.role, slots=self.slots):
+                # Control for manual bidding agent
+                while True:
+                    agent_id = input("Chi vuole offrire? ")
+                    # Check if input is either "nessuno" or a valid agent ID
+                    valid_agent_ids = [agent.agent_id for agent in self.agents]
+                    if agent_id == "nessuno" or agent_id in valid_agent_ids:
                         break
-                    else:
-                        print(f"Offerta non valida. Deve essere > {self.current_price} e l'agente deve poterla permettere.")
-                        print(f"Crediti disponibili: {bidding_agent.current_credits}")
-                except ValueError:
-                    print("Inserire un numero valido per l'offerta.")
+                    else: 
+                        print("ID non valido. Riprova.")
 
-            self.current_price = offerta
-            self.highest_bidder = agent_id
+                if agent_id == "nessuno":
+                    break
+
+                # Get the agent object for validation
+                bidding_agent = next(agent for agent in self.agents if agent.agent_id == agent_id)
+                
+                # Control for manual offer
+                while True:
+                    try:
+                        offerta = int(input("Quanto offre? "))
+                        # Check if the offer is valid using the modified can_participate_in_bid function
+                        if self.can_participate_in_bid(agent=bidding_agent, offer_price=offerta, 
+                                                    position=player.role, slots=self.slots):
+                            break
+                        else:
+                            print(f"Offerta non valida. Deve essere > {self.current_price} e l'agente deve poterla permettere.")
+                            print(f"Crediti disponibili: {bidding_agent.current_credits}")
+                    except ValueError:
+                        print("Inserire un numero valido per l'offerta.")
+
+                self.current_price = offerta
+                self.highest_bidder = agent_id
+            
+            # If there is no human agent, break the loop
+            else :
+                break
 
 
         
