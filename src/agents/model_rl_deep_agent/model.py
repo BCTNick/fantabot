@@ -18,7 +18,7 @@ class Linear_QNet(nn.Module):
 
     def load_best_weights(self):
         """Load weights from weights/best_weights.pth if it exists, otherwise use random initialization"""
-        weights_file = './weights/best_weights.pth'
+        weights_file = '.src/agents/model_rl_deep_agent/weights/best_weights.pth'
         if os.path.exists(weights_file):
             self.load_state_dict(torch.load(weights_file))
 

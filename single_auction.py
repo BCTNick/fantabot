@@ -46,7 +46,7 @@ agents = [
         DynamicCapAgent(agent_id="dynamic_cap_bestx1_balanced", cap_strategy="bestxi_based", bestxi_budget=0.95),
         DynamicCapAgent(agent_id="dynamic_cap_bestx1_aggressive", cap_strategy="bestxi_based", bestxi_budget=0.99),
         DynamicCapAgent(agent_id="dynamic_cap_tier", cap_strategy="tier_based"),
-        RLDeepAgent(agent_id="RLDeepAgent", mode = "training"),
+        RLDeepAgent(agent_id="RLDeepAgent", mode = "inference"),
         RandomAgent(agent_id="random_1")
     ]
 random.shuffle(agents) 

@@ -45,7 +45,7 @@ class RLDeepAgent(Agent):
         
         self.model = Linear_QNet(input_size = 51, hidden_size_1 = 256, hidden_size_2 = 128, output_size = 1)
         self.model.load_best_weights()
-        self.trainer = QTrainer(model=self.model, lr=0.01, gamma=self.gamma)
+        self.trainer = QTrainer(model=self.model, lr=0.1, gamma=self.gamma)
         self.all_features0_store = []
         self.output_probability_store = []
         self.reward_store = []
