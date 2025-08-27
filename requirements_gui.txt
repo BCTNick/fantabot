@@ -1,0 +1,14 @@
+# GUI requirements for FantaBot Auction
+# All dependencies needed for the graphical interface
+
+# Core dependencies (already included in existing requirements)
+pandas>=1.5.0
+numpy>=1.21.0
+openpyxl>=3.0.0  # For Excel file reading
+
+# GUI is built with tkinter which comes with Python standard library
+# No additional GUI dependencies needed
+
+# Optional: For enhanced GUI features (uncomment if needed)
+# Pillow>=9.0.0  # For image handling in GUI
+# matplotlib>=3.5.0  # For charts in GUI
