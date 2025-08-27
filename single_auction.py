@@ -145,7 +145,7 @@ for agent in agents:
     bestxi_eval = agent.squad.objective(bestxi=True, standardized=False)
     bestxi_std_eval = agent.squad.objective(bestxi=True, standardized=True)
     if rldeep:
-        score = rldeep.get_score(agent, agents, auction.players)
+        score = rldeep.get_score(agent, rldeep.auction_progress)
     
     # Log summary metrics
     logger.info("\n📈 SQUAD METRICS:")
@@ -158,4 +158,5 @@ for agent in agents:
     logger.info(f"  Total Credits Spent: {1000 - agent.current_credits}")
     logger.info("")
 
+logger.info(f"auction completed percentage: {rldeep.auction_progress}")
 logger.info(f"\n📁 Complete log saved to: {log_filename}")

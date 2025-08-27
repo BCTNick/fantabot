@@ -3,7 +3,7 @@ Data loading utilities
 """
 
 import pandas as pd
-from models import Player, calculate_standardized_and_ranking
+from src.models import Player, calculate_standardized_and_ranking
 
 
 def load_players_from_excel(file_path: str = "data/players_list.xlsx"):
