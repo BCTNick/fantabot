@@ -6,7 +6,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 import random 
 import copy
-from .model_rl_deep_agent.model import Linear_QNet, QTrainer
+
+# Handle both direct execution and package import
+try:
+    from .model_rl_deep_agent.model import Linear_QNet, QTrainer
+except ImportError:
+    from model_rl_deep_agent.model import Linear_QNet, QTrainer
 
 # Data 
 import numpy as np
@@ -17,9 +22,15 @@ import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-# from src.agents.training_rl_deep_agent import train 
-from agents.agent_class import Agent
-from models import Player, Squad, Slots
+# Handle both direct execution and package import for agent and model imports
+try:
+    from agents.agent_class import Agent
+    from models import Player, Squad, Slots
+except ImportError:
+    # When running directly, adjust the path
+    sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
+    from src.agents.agent_class import Agent
+    from src.models import Player, Squad, Slots
 
 
 # Get logger
@@ -27,10 +38,11 @@ logger = logging.getLogger(__name__)
 
 
 class RLDeepAgent(Agent):
-    def __init__(self, agent_id, mode: str = "inference"):
+    def __init__(self, agent_id, mode: str = "inference", weights: str = None):
         super().__init__(agent_id)
         self.mode = mode
         self.agent_id = agent_id
+        self.weights = weights
 
         # Concerning the model
         self.epsilon = 0  
@@ -44,11 +56,12 @@ class RLDeepAgent(Agent):
         # Total: 3 + 12 + 3 + 33 = 51
         
         self.model = Linear_QNet(input_size = 51, hidden_size_1 = 256, hidden_size_2 = 128, output_size = 1)
-        self.model.load_best_weights()
-        self.trainer = QTrainer(model=self.model, lr=0.1, gamma=self.gamma)
+        self.model.load_weights(custom_weights=self.weights)
+        self.trainer = QTrainer(model=self.model, lr=0.01, gamma=self.gamma)
         self.all_features0_store = []
         self.output_probability_store = []
         self.reward_store = []
+        self.num_decisions = 0
 
     def initialize(self, players: List[Player], slots: Slots, initial_credits: int, num_participants: int):
         """Initialize the agent for auction"""
@@ -298,6 +311,8 @@ class RLDeepAgent(Agent):
                 # logger.info(f"  Reward RLDEEPAGENT (positional): {reward}")
 
                 self.reward_store.append(reward)
+
+                self.num_decisions += 1
 
             except Exception as e:
                 logger.error(f"Error in training mode: {e}")

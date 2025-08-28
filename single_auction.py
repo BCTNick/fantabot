@@ -40,21 +40,21 @@ logger = logging.getLogger()
 
 # Create the characteristics of the auction
 agents = [
-        CapAgent(agent_id="cap_bestx1_balanced", cap_strategy="bestxi_based"),
-        CapAgent(agent_id="cap_bestx1_aggressive", cap_strategy="bestxi_based", bestxi_budget=0.99),
+        HumanAgent(agent_id="cap_bestx1_balanced"),
+        HumanAgent(agent_id="cap_bestx1_aggressive"),
         CapAgent(agent_id="cap_tier", cap_strategy="tier_based"),
         DynamicCapAgent(agent_id="dynamic_cap_bestx1_balanced", cap_strategy="bestxi_based", bestxi_budget=0.95),
         DynamicCapAgent(agent_id="dynamic_cap_bestx1_aggressive", cap_strategy="bestxi_based", bestxi_budget=0.99),
         DynamicCapAgent(agent_id="dynamic_cap_tier", cap_strategy="tier_based"),
-        RLDeepAgent(agent_id="RLDeepAgent", mode = "inference"),
-        RandomAgent(agent_id="random_1")
+        RLDeepAgent(agent_id="RLDeepAgent", mode = "training"),
+        HumanAgent(agent_id="umano")
     ]
 random.shuffle(agents) 
 
 initial_credits = 1000
 slots = Slots()
 listone = load_players_from_excel()
-auction_type = "chiamata"
+auction_type = "chiamata_vera"
 per_ruolo = True
 
 # Create auction (but don't run yet)
@@ -157,6 +157,8 @@ for agent in agents:
     logger.info(f"  Credits Remaining: {agent.current_credits}")
     logger.info(f"  Total Credits Spent: {1000 - agent.current_credits}")
     logger.info("")
+
+logger.info(f"  Total Decisions RLDEEPAGENT: {rldeep.num_decisions}, len(all_features0_store): {len(rldeep.all_features0_store)}")
 
 logger.info(f"auction completed percentage: {rldeep.auction_progress}")
 logger.info(f"\n📁 Complete log saved to: {log_filename}")

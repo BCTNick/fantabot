@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class Auction:
     """Main auction system that manages the bidding process"""
     
-    def __init__(self, slots: Slots, agents: List[Agent], players: List[Player], initial_credits: int = 1000):
+    def __init__(self, slots: Slots, agents: List[Agent], players: List[Player], initial_credits: int = 1000, ):
         # Rules 
         self.slots = slots.to_dict()
         self.initial_credits = initial_credits
@@ -93,27 +93,60 @@ class Auction:
                 break
 
         return None
+
+    def ask_automatic_agents(self):
         
+        agent_index = 0
+        automatic_agents = [agent for agent in self.agents if type(agent).__name__ != "HumanAgent"]
+        
+        while agent_index < len(automatic_agents):
+            current_agent = automatic_agents[agent_index]
+            
+            # Check if agent can participate in this bid
+            if self.can_participate_in_bid(agent=current_agent, offer_price=self.current_price + 1, 
+                                            position=self.current_player.role, slots=self.slots) is True:
+                
+                # Get all other agents except the current one
+                other_agents = [agent for agent in self.agents if agent.agent_id != current_agent.agent_id]
+                
+                # Get current agent's decision
+                decision = current_agent.make_offer_decision(
+                    current_player=self.current_player,
+                    current_price=self.current_price,
+                    highest_bidder=self.highest_bidder,
+                    player_list=self.players,
+                    other_agents=other_agents
+                )
+                
+                if decision == "offer_+1":
+                    logger.info(f"  💰 {current_agent.agent_id} suggests to bid {self.current_price + 1}")
+                else:
+                    logger.info(f"  ❌ {current_agent.agent_id} suggests to pass")
+            else:
+                logger.info(f"  🚫 {current_agent.agent_id} cannot bid")
+            
+            agent_index += 1
+
+        return None
+
     # Loop for one player auction    
     def single_player(self, player: Player): 
         self.current_player = player
         self.current_price = 0
         self.highest_bidder = None
-        
-
-        
+           
         if self.verbose:
             logger.info(f"\n🏆 AUCTION START: {player.name} ({player.role}) - Evaluation: {player.evaluation}")
         
-
         while True:
+            
+            if self.auction_type == "chiamata_vera":
+                self.ask_automatic_agents()
+            else:
+                self.loop_automatic_agents()
 
-            # This loops automatic agents
-            self.loop_automatic_agents()
-
-            # If there is at least one human agent, add the manual bidding #TODO: also add a mode for manual bidding
-            if any(isinstance(agent, HumanAgent) for agent in self.agents):
-
+            # If there is at least one human agent, add manual bidding (regardless of auction type)
+            if any(type(agent).__name__ == "HumanAgent" for agent in self.agents):
                 # Control for manual bidding agent
                 while True:
                     agent_id = input("Chi vuole offrire? ")
@@ -147,12 +180,10 @@ class Auction:
                 self.current_price = offerta
                 self.highest_bidder = agent_id
             
-            # If there is no human agent, break the loop
+            # If there is no human agent, break the loop (regardless of auction type)
             else :
                 break
 
-
-        
         # Finalize sale
         if self.highest_bidder:
             player.fantasy_team = self.highest_bidder
@@ -175,6 +206,7 @@ class Auction:
     def run_all(self, auction_type: str = "random", per_ruolo: bool = True, verbose: bool = False):
         """Run auction for all players"""
         self.verbose = verbose
+        self.auction_type = auction_type
 
         roles = ["GK", "DEF", "MID", "ATT"]
         
@@ -185,6 +217,27 @@ class Auction:
             players_to_auction.sort(key=lambda p: p.name)
         elif auction_type == "chiamata":
             players_to_auction.sort(key=lambda p: p.evaluation, reverse=True)
+
+        if auction_type == "chiamata_vera":
+            if verbose:
+                    logger.info(f"\n🏈 STARTING AUCTION")
+
+            while True:
+                next_player_name = input("Enter the next player for auction: ")
+                
+                # Find the player by name
+                next_player = next((p for p in self.players if p.name.lower() == next_player_name.lower()), None)
+                
+                if next_player is None:
+                    logger.info(f"❌ Player '{next_player_name}' not found. Please enter a valid player name.")
+                    continue
+                
+                # Check if player is already assigned to a fantasy team
+                if next_player.fantasy_team is not None:
+                    logger.info(f"❌ Player '{next_player.name}' is already assigned to team '{next_player.fantasy_team}'.")
+                    continue
+                
+                self.single_player(next_player)
 
         if per_ruolo:
             for role in roles:

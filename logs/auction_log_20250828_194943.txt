@@ -1,0 +1,30 @@
+
+⚙️ AUCTION CONFIGURATION
+----------------------------------------
+📊 Slots per team:
+  GK: 3
+  DEF: 8
+  MID: 8
+  ATT: 6
+💰 Initial credits per agent: 1000
+👥 Number of agents: 8
+📋 Total players available: 513
+  Auction type: chiamata_vera
+  Per role: True
+
+🤖 AGENT CONFIGURATIONS
+----------------------------------------
+  umano: HumanAgent
+  dynamic_cap_bestx1_balanced: DynamicCapAgent
+  cap_bestx1_aggressive: CapAgent (strategy: bestxi_based)
+  dynamic_cap_bestx1_aggressive: DynamicCapAgent
+  dynamic_cap_tier: DynamicCapAgent
+  RLDeepAgent: RLDeepAgent
+  cap_bestx1_balanced: CapAgent (strategy: bestxi_based)
+  cap_tier: CapAgent (strategy: tier_based)
+🏁 AUCTION SIMULATION STARTED
+📅 Timestamp: 2025-08-28 19:49:44
+============================================================
+
+🏈 STARTING AUCTION
+❌ Player 'python single_auction.py' not found. Please enter a valid player name.

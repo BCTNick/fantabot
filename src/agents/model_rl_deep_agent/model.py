@@ -14,16 +14,32 @@ class Linear_QNet(nn.Module):
         self.linear3 = nn.Linear(hidden_size_2, output_size)
         
         # Try to load existing weights
-        self.load_best_weights()
+        self.load_weights()
 
-    def load_best_weights(self):
-        """Load weights from weights/best_weights.pth if it exists, otherwise use random initialization"""
-        weights_file = '.src/agents/model_rl_deep_agent/weights/best_weights.pth'
-        if os.path.exists(weights_file):
-            self.load_state_dict(torch.load(weights_file))
+    def load_weights(self, custom_weights=None):
+        if custom_weights:
+            # Custom weights provided - build path from base weights directory
+            base_weights_dir = os.path.join(os.path.dirname(__file__), 'weights')
+            
+            # Always treat custom_weights as a path relative to base_weights_dir
+            weights_file = os.path.join(base_weights_dir, custom_weights)
+                
+            if os.path.exists(weights_file):
+                self.load_state_dict(torch.load(weights_file))
+
+        else:
+            # Default behavior - load best_weights.pth directly from weights folder
+            weights_file = os.path.join(os.path.dirname(__file__), 'weights', 'best_weights.pth')
+            if os.path.exists(weights_file):
+                self.load_state_dict(torch.load(weights_file))
+
 
     def forward(self, x):
-        input_tensor = torch.tensor(x, dtype=torch.float32)
+        # Efficient tensor conversion - avoid unnecessary copying if already a tensor
+        if isinstance(x, torch.Tensor):
+            input_tensor = x.detach().clone().to(torch.float32)
+        else:
+            input_tensor = torch.tensor(x, dtype=torch.float32)
 
         x = F.relu(self.linear1(input_tensor))
         x = self.dropout1(x)  
@@ -32,15 +48,23 @@ class Linear_QNet(nn.Module):
         x = F.sigmoid(self.linear3(x))  
         return x
 
-    def save(self, file_name='best_weights.pth'):
-        weights_folder_path = './weights'
-        if not os.path.exists(weights_folder_path):
-            os.makedirs(weights_folder_path)
-            print(f"Created weights folder: {weights_folder_path}")
+    def save(self, file_path='best_weights.pth'):
+        # If file_path is absolute, use it directly; if relative, use with ./weights/
+        if os.path.isabs(file_path):
+            # Absolute path - use as is
+            save_path = file_path
+            # Create directory if it doesn't exist
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        else:
+            # Relative path - use with ./weights/
+            weights_folder_path = './weights'
+            if not os.path.exists(weights_folder_path):
+                os.makedirs(weights_folder_path)
+                print(f"Created weights folder: {weights_folder_path}")
+            save_path = os.path.join(weights_folder_path, file_path)
 
-        file_path = os.path.join(weights_folder_path, file_name)
-        torch.save(self.state_dict(), file_path)
-        print(f"Model weights saved to {file_path}")
+        torch.save(self.state_dict(), save_path)
+        print(f"Model weights saved to {save_path}")
 
 
 class QTrainer:
