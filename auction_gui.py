@@ -61,9 +61,11 @@ class FantaAuctionGUI:
             self.tts_engine.setProperty('rate', 150)  # Speed of speech
             self.tts_engine.setProperty('volume', 0.9)  # Volume level (0.0 to 1.0)
             self.tts_available = True
+            self.auction_tts_enabled = True  # Enable TTS announcements for auction events
         except:
             self.tts_engine = None
             self.tts_available = False
+            self.auction_tts_enabled = False
             print("Warning: TTS engine not available")
         
         # Available agent types
@@ -157,6 +159,12 @@ class FantaAuctionGUI:
         # Per ruolo
         self.per_ruolo_var = tk.BooleanVar(value=True)
         ttk.Checkbutton(settings_group, text="Per ruolo", variable=self.per_ruolo_var).grid(row=6, column=0, columnspan=2, sticky=tk.W, pady=2)
+        
+        # TTS Settings
+        if self.tts_available:
+            ttk.Label(settings_group, text="TTS Annunci Asta:").grid(row=7, column=0, sticky=tk.W, pady=2)
+            self.auction_tts_var = tk.BooleanVar(value=self.auction_tts_enabled)
+            ttk.Checkbutton(settings_group, text="Abilita", variable=self.auction_tts_var).grid(row=7, column=1, sticky=tk.W, padx=(5, 0), pady=2)
         
         # Agents Section
         agents_group = ttk.LabelFrame(scrollable_frame, text="Agenti Partecipanti", padding=10)
@@ -478,6 +486,62 @@ class FantaAuctionGUI:
         
         return ""
     
+    def announce_player_auction(self, player):
+        """Announce that a player is being auctioned via TTS"""
+        if not self.tts_available or not self.auction_tts_var.get():
+            return
+        
+        # Get role in Italian
+        role_names = {
+            "GK": "portiere",
+            "DEF": "difensore", 
+            "MID": "centrocampista",
+            "ATT": "attaccante"
+        }
+        role_it = role_names.get(player.role, player.role)
+        
+        message = f"In asta: {player.name}, {role_it}, valutazione {player.evaluation}"
+        self.speak_tts_message(message)
+    
+    def announce_bid(self, agent_name, amount):
+        """Announce a bid via TTS"""
+        if not self.tts_available or not self.auction_tts_var.get():
+            return
+        
+        message = f"{agent_name} offre {amount} crediti"
+        self.speak_tts_message(message)
+    
+    def announce_player_assignment(self, player_name, agent_name, price):
+        """Announce player assignment via TTS"""
+        if not self.tts_available or not self.auction_tts_var.get():
+            return
+        
+        message = f"{player_name} assegnato a {agent_name} per {price} crediti"
+        self.speak_tts_message(message)
+    
+    def announce_player_unsold(self, player_name):
+        """Announce that a player went unsold via TTS"""
+        if not self.tts_available or not self.auction_tts_var.get():
+            return
+        
+        message = f"{player_name} non venduto"
+        self.speak_tts_message(message)
+    
+    def speak_tts_message(self, message):
+        """Speak a message using TTS in a separate thread"""
+        if not self.tts_available:
+            return
+        
+        def tts_worker():
+            try:
+                self.tts_engine.say(message)
+                self.tts_engine.runAndWait()
+            except:
+                pass  # Ignore TTS errors
+        
+        tts_thread = threading.Thread(target=tts_worker, daemon=True)
+        tts_thread.start()
+    
     def create_agents(self):
         """Create agent instances from configuration"""
         agents = []
@@ -509,6 +573,10 @@ class FantaAuctionGUI:
         self.auction_info_text.config(state=tk.NORMAL)
         self.auction_info_text.delete(1.0, tk.END)
         self.auction_info_text.config(state=tk.DISABLED)
+        
+        # Announce auction start
+        if self.tts_available and hasattr(self, 'auction_tts_var') and self.auction_tts_var.get():
+            self.speak_tts_message("Inizia l'asta!")
         
         # Start auction in thread
         thread = threading.Thread(target=self.run_auction, daemon=True)
@@ -611,6 +679,14 @@ class FantaAuctionGUI:
         
         logger.info(f"\n💫 GIOCATORE IN ASTA: {player.name} ({player.role}) - Valore: {player.evaluation}")
         
+        # Announce the player being auctioned via TTS
+        self.announce_player_auction(player)
+        
+        # Brief pause to let the announcement be heard
+        if self.tts_available and hasattr(self, 'auction_tts_var') and self.auction_tts_var.get():
+            import time
+            time.sleep(1.5)  # 1.5 second pause
+        
         # Set initial state
         self.auction.current_player = player
         self.auction.current_price = 1
@@ -651,6 +727,8 @@ class FantaAuctionGUI:
                         
                         offers.append((agent, offer_price))
                         logger.info(f"💰 {agent.agent_id} offre {offer_price} crediti")
+                        # Announce the bid via TTS
+                        self.announce_bid(agent.agent_id, offer_price)
                     else:
                         logger.info(f"🚫 {agent.agent_id} non offre")
             
@@ -686,6 +764,8 @@ class FantaAuctionGUI:
                         self.auction.current_price = human_offer_price
                         self.auction.highest_bidder = human_agent
                         logger.info(f"💰 {human_agent.agent_id} offre {human_offer_price} crediti")
+                        # Announce the human bid via TTS
+                        self.announce_bid(human_agent.agent_id, human_offer_price)
                         rounds_without_bids = 0
                     else:
                         logger.info(f"❌ Offerta di {human_agent.agent_id} non valida")
@@ -712,8 +792,12 @@ class FantaAuctionGUI:
             self.auction.highest_bidder._squad.append(player)
             logger.info(f"✅ {player.name} assegnato a {self.auction.highest_bidder.agent_id} per {self.auction.current_price} crediti")
             logger.info(f"💳 {self.auction.highest_bidder.agent_id} - Crediti rimanenti: {self.auction.highest_bidder.current_credits}")
+            # Announce the final assignment via TTS
+            self.announce_player_assignment(player.name, self.auction.highest_bidder.agent_id, self.auction.current_price)
         else:
             logger.info(f"❌ {player.name} non assegnato - nessuna offerta")
+            # Announce that the player went unsold via TTS
+            self.announce_player_unsold(player.name)
     
     def show_human_input(self, player, human_agents, current_price, highest_bidder):
         """Show human input section in the main GUI"""
@@ -840,6 +924,10 @@ class FantaAuctionGUI:
         self.start_button.config(state=tk.NORMAL)
         self.stop_button.config(state=tk.DISABLED)
         self.status_var.set("Asta completata")
+        
+        # Announce auction end
+        if self.tts_available and hasattr(self, 'auction_tts_var') and self.auction_tts_var.get():
+            self.speak_tts_message("Asta terminata!")
     
     def check_log_queue(self):
         """Check for new log messages and display them"""
