@@ -1,0 +1,115 @@
+⚙️ CONFIGURAZIONE ASTA
+----------------------------------------
+📊 Slot per squadra:
+  GK: 3
+  DEF: 8
+  MID: 8
+  ATT: 6
+💰 Crediti iniziali: 1000
+👥 Numero agenti: 3
+📋 Giocatori disponibili: 513
+🏁 ASTA INIZIATA - 2025-09-01 15:13:49
+============================================================
+
+🔄 Inizio asta per GK
+
+💫 GIOCATORE IN ASTA: Rinaldi (GK) - Valore: 1
+
+🔄 Round di offerte - Prezzo attuale: 1
+🚫 Cap Agent non offre
+❌ Errore: Errore durante l'asta: 'ConfigurationTab' object has no attribute 'get_agents_config'
+Traceback (most recent call last):
+  File "/Users/angelocipullo/Documents/Repos/fantabot/src/core/enhanced_auction.py", line 70, in run_full_auction
+    self._run_chiamata_auction(per_ruolo)
+  File "/Users/angelocipullo/Documents/Repos/fantabot/src/core/enhanced_auction.py", line 96, in _run_chiamata_auction
+    self._auction_single_player(player)
+  File "/Users/angelocipullo/Documents/Repos/fantabot/src/core/enhanced_auction.py", line 142, in _auction_single_player
+    automatic_offers = self._get_automatic_bids()
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/angelocipullo/Documents/Repos/fantabot/src/core/enhanced_auction.py", line 225, in _get_automatic_bids
+    self.on_bid_made(agent, 0, self.current_player)
+  File "/Users/angelocipullo/Documents/Repos/fantabot/enhanced_auction_gui.py", line 309, in on_bid_made
+    agents_config = self.config_tab.get_agents_config()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'ConfigurationTab' object has no attribute 'get_agents_config'. Did you mean: 'agents_config'?
+
+🏁 ASTA COMPLETATA!
+📅 2025-09-01 15:13:49
+============================================================
+⚙️ CONFIGURAZIONE ASTA
+----------------------------------------
+📊 Slot per squadra:
+  GK: 3
+  DEF: 8
+  MID: 8
+  ATT: 6
+💰 Crediti iniziali: 1000
+👥 Numero agenti: 3
+📋 Giocatori disponibili: 513
+🏁 ASTA INIZIATA - 2025-09-01 15:14:48
+============================================================
+
+🔄 Inizio asta per GK
+
+💫 GIOCATORE IN ASTA: Rossi F. (GK) - Valore: 1
+
+🔄 Round di offerte - Prezzo attuale: 1
+🚫 Cap Agent non offre
+❌ Errore: Errore durante l'asta: 'ConfigurationTab' object has no attribute 'get_agents_config'
+Traceback (most recent call last):
+  File "/Users/angelocipullo/Documents/Repos/fantabot/src/core/enhanced_auction.py", line 70, in run_full_auction
+    self._run_chiamata_auction(per_ruolo)
+  File "/Users/angelocipullo/Documents/Repos/fantabot/src/core/enhanced_auction.py", line 96, in _run_chiamata_auction
+    self._auction_single_player(player)
+  File "/Users/angelocipullo/Documents/Repos/fantabot/src/core/enhanced_auction.py", line 142, in _auction_single_player
+    automatic_offers = self._get_automatic_bids()
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/angelocipullo/Documents/Repos/fantabot/src/core/enhanced_auction.py", line 225, in _get_automatic_bids
+    self.on_bid_made(agent, 0, self.current_player)
+  File "/Users/angelocipullo/Documents/Repos/fantabot/enhanced_auction_gui.py", line 309, in on_bid_made
+    agents_config = self.config_tab.get_agents_config()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'ConfigurationTab' object has no attribute 'get_agents_config'. Did you mean: 'agents_config'?
+
+🏁 ASTA COMPLETATA!
+📅 2025-09-01 15:14:48
+============================================================
+⚙️ CONFIGURAZIONE ASTA
+----------------------------------------
+📊 Slot per squadra:
+  GK: 3
+  DEF: 8
+  MID: 8
+  ATT: 6
+💰 Crediti iniziali: 1000
+👥 Numero agenti: 3
+📋 Giocatori disponibili: 513
+🏁 ASTA INIZIATA - 2025-09-01 15:16:52
+============================================================
+
+🔄 Inizio asta per GK
+
+💫 GIOCATORE IN ASTA: Pinsoglio (GK) - Valore: 1
+
+🔄 Round di offerte - Prezzo attuale: 1
+🚫 Cap Agent non offre
+❌ Errore: Errore durante l'asta: 'ConfigurationTab' object has no attribute 'get_agents_config'
+Traceback (most recent call last):
+  File "/Users/angelocipullo/Documents/Repos/fantabot/src/core/enhanced_auction.py", line 70, in run_full_auction
+    self._run_chiamata_auction(per_ruolo)
+  File "/Users/angelocipullo/Documents/Repos/fantabot/src/core/enhanced_auction.py", line 96, in _run_chiamata_auction
+    self._auction_single_player(player)
+  File "/Users/angelocipullo/Documents/Repos/fantabot/src/core/enhanced_auction.py", line 142, in _auction_single_player
+    automatic_offers = self._get_automatic_bids()
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/angelocipullo/Documents/Repos/fantabot/src/core/enhanced_auction.py", line 225, in _get_automatic_bids
+    self.on_bid_made(agent, 0, self.current_player)
+  File "/Users/angelocipullo/Documents/Repos/fantabot/enhanced_auction_gui.py", line 309, in on_bid_made
+    agents_config = self.config_tab.get_agents_config()
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'ConfigurationTab' object has no attribute 'get_agents_config'. Did you mean: 'agents_config'?
+
+🏁 ASTA COMPLETATA!
+📅 2025-09-01 15:16:52
+============================================================
+

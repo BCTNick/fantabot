@@ -10,6 +10,7 @@ from src.models import Player, Slots
 from src.agents.agent_class import Agent
 from src.agents.human_agent import HumanAgent
 from src.utils.logging_handler import AuctionLogger
+from src.utils.tts_manager import TTSManager
 from src.utils.validators import AuctionValidator
 
 
@@ -17,7 +18,7 @@ class EnhancedAuction:
     """Enhanced auction system with better management and UI integration"""
     
     def __init__(self, slots: Slots, agents: List[Agent], players: List[Player], 
-                 initial_credits: int = 1000):
+                 initial_credits: int = 1000, tts_manager: Optional[TTSManager] = None):
         self.slots = slots  # Keep as Slots object
         self.slots_dict = slots.to_dict()  # Also keep as dict for compatibility
         self.initial_credits = initial_credits
@@ -27,6 +28,7 @@ class EnhancedAuction:
         self.current_price = 0
         self.highest_bidder = None
         self.running = False
+        self.tts_manager = tts_manager
         
         # Callbacks for UI updates
         self.on_player_start: Optional[Callable] = None
@@ -118,6 +120,15 @@ class EnhancedAuction:
         if self.on_player_start:
             self.on_player_start(player)
         
+        # Announce new player with TTS
+        if self.tts_manager:
+            self.tts_manager.announce_player(
+                player_name=player.name,
+                role=player.role,
+                evaluation=player.evaluation,
+                priority=2  # High priority for player announcements
+            )
+        
         AuctionLogger.log_player_auction_start(player)
         
         # Run bidding rounds
@@ -201,8 +212,17 @@ class EnhancedAuction:
                     
                     offers.append((agent, offer_price))
                     AuctionLogger.log_bid(agent.agent_id, offer_price)
+                    
+                    # Notify UI of bid
+                    if self.on_bid_made:
+                        self.on_bid_made(agent, offer_price, self.current_player)
+                        
                 else:
                     AuctionLogger.log_no_bid(agent.agent_id)
+                    
+                    # Notify UI of no bid
+                    if self.on_bid_made:
+                        self.on_bid_made(agent, 0, self.current_player)
         
         return offers
     
@@ -227,6 +247,15 @@ class EnhancedAuction:
             # Update agent
             self.highest_bidder.current_credits -= self.current_price
             self.highest_bidder._squad.append(player)
+            
+            # Announce winner with TTS
+            if self.tts_manager:
+                self.tts_manager.announce_winner(
+                    player_name=player.name,
+                    winner=self.highest_bidder.agent_id,
+                    amount=self.current_price,
+                    priority=1  # Highest priority for final results
+                )
             
             # Log and notify
             AuctionLogger.log_player_sold(

@@ -242,8 +242,8 @@ class ConfigurationTab:
         default_agents = [
             ("Angelo", "Human Agent", True),
             ("Andrea", "Human Agent", True),
-            ("Cap Agent", "Cap Agent", True),
-            ("Random Bot", "Random Agent", False)
+            ("Cap Agent", "Cap Agent", True),  # Abilitato TTS per sentire le offerte
+            ("Random Bot", "Random Agent", True)  # Abilitato TTS per sentire le offerte
         ]
         
         for name, agent_type, tts_enabled in default_agents:
@@ -291,6 +291,10 @@ class ConfigurationTab:
             "agents": self.agents_config.copy()
         }
     
+    def get_agents_config(self) -> List[Dict]:
+        """Get agents configuration for TTS and other features"""
+        return self.agents_config.copy()
+    
     # Event handlers
     def _add_agent(self):
         """Add new agent"""
@@ -305,7 +309,8 @@ class ConfigurationTab:
             messagebox.showerror("Errore", f"Un agente con nome '{name}' esiste già")
             return
         
-        tts_enabled = (agent_type == "Human Agent")
+        # Abilita TTS per tutti i tipi di agenti di default
+        tts_enabled = True  # Cambiato da (agent_type == "Human Agent")
         self._add_agent_to_config(name, agent_type, tts_enabled)
         self.agent_name_var.set("")
     

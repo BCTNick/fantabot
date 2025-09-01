@@ -27,6 +27,7 @@ from src.utils.tts_manager import TTSManager
 from src.utils.file_manager import FileManager
 from src.gui.config_tab import ConfigurationTab
 from src.gui.enhanced_auction_tab import EnhancedAuctionTab
+from src.gui.teams_tab import TeamsTab
 
 
 class GUIHumanAgent(HumanAgent):
@@ -97,6 +98,11 @@ class EnhancedFantaAuctionGUI:
             on_start_auction=self.start_auction,
             on_stop_auction=self.stop_auction
         )
+        
+        # Teams tab
+        self.teams_frame = ttk.Frame(self.notebook)
+        self.notebook.add(self.teams_frame, text="👥 Squadre")
+        self.teams_tab = TeamsTab(self.teams_frame)
         
         # Results tab
         self.results_frame = ttk.Frame(self.notebook)
@@ -215,11 +221,15 @@ class EnhancedFantaAuctionGUI:
             slots=slots,
             agents=agents,
             players=players,
-            initial_credits=config["settings"]["initial_credits"]
+            initial_credits=config["settings"]["initial_credits"],
+            tts_manager=self.tts_manager
         )
         
         # Configure auction tab with slots
         self.auction_tab.set_auction_slots(self.auction.slots_dict)
+        
+        # Configure teams tab with auction data
+        self.teams_tab.set_auction_data(agents, players)
         
         # Set auction callbacks
         self.auction.set_callbacks(
@@ -287,9 +297,23 @@ class EnhancedFantaAuctionGUI:
         if self.tts_manager.available:
             self.tts_manager.announce_player(player.name, player.role, player.evaluation)
     
-    def on_bid_made(self, agent_name: str, amount: int):
+    def on_bid_made(self, agent, amount: int, current_player):
         """Called when a bid is made"""
+        agent_name = agent.agent_id
+        
+        # Update UI
         self.auction_tab.update_bidding_info(amount, agent_name)
+        
+        # TTS announcement for bids
+        if self.tts_manager:
+            agents_config = self.config_tab.get_agents_config()
+            
+            if amount > 0:
+                # Announce the bid
+                self.tts_manager.announce_bid(agent_name, amount, agents_config, priority=4)
+            else:
+                # Handle no bid (intentionally quiet)
+                self.tts_manager.announce_no_bid(agent_name, agents_config)
         
         # Update summary periodically
         if self.auction:
@@ -306,6 +330,9 @@ class EnhancedFantaAuctionGUI:
             summary = self.auction.get_auction_summary()
             self.auction_tab.update_auction_summary(self.auction.agents)
             self.auction_tab.update_quick_stats(summary)
+            
+            # Update teams tab
+            self.teams_tab.refresh_teams()
     
     def on_human_input_needed(self, player, human_agents, current_price, highest_bidder):
         """Called when human input is needed"""
@@ -357,8 +384,46 @@ class EnhancedFantaAuctionGUI:
             return
         
         config = self.config_tab.get_configuration()
+        if not config["valid"]:
+            return
+        
+        # Extract agent name from the message
+        agent_name = self._extract_agent_name_from_message(message)
+        if agent_name:
+            self.tts_manager.speak_for_agent(agent_name, message, config["agents"])
+    
+    def _extract_agent_name_from_message(self, message: str) -> str:
+        """Extract agent name from log message"""
+        # Look for patterns like "💰 AgentName offre X crediti" or "🚫 AgentName non offre"
+        import re
+        
+        # Pattern for bid messages: "💰 AgentName offre X crediti"
+        bid_pattern = r'💰\s+([^\\s]+)\s+offre\s+\d+\s+crediti'
+        match = re.search(bid_pattern, message)
+        if match:
+            return match.group(1)
+        
+        # Pattern for no bid messages: "🚫 AgentName non offre"
+        no_bid_pattern = r'🚫\s+([^\\s]+)\s+non\s+offre'
+        match = re.search(no_bid_pattern, message)
+        if match:
+            return match.group(1)
+        
+        # Pattern for assignment messages: "PlayerName assegnato a AgentName per X crediti"
+        assignment_pattern = r'(\w+)\s+assegnato\s+a\s+([^\\s]+)\s+per\s+\d+\s+crediti'
+        match = re.search(assignment_pattern, message)
+        if match:
+            return match.group(2)
+        
+        # Pattern for general agent actions: look for agent names from config
+        config = self.config_tab.get_configuration()
         if config["valid"]:
-            self.tts_manager.speak_for_agent("", message, config["agents"])
+            for agent in config["agents"]:
+                agent_name = agent["name"]
+                if agent_name in message:
+                    return agent_name
+        
+        return ""
     
     # Menu actions
     def clear_logs(self):
@@ -402,6 +467,25 @@ def main():
         pass
     
     app = EnhancedFantaAuctionGUI(root)
+    
+    # Handle application closing
+    def on_closing():
+        """Handle application closing"""
+        try:
+            # Stop auction if running
+            if hasattr(app, 'auction') and app.auction and app.auction.running:
+                app.auction.stop_auction()
+            
+            # Shutdown TTS manager
+            if hasattr(app, 'tts_manager') and app.tts_manager:
+                app.tts_manager.shutdown()
+                
+        except Exception as e:
+            print(f"Error during shutdown: {e}")
+        finally:
+            root.destroy()
+    
+    root.protocol("WM_DELETE_WINDOW", on_closing)
     
     # Center window on screen
     root.update_idletasks()
