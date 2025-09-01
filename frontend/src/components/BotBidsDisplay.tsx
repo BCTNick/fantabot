@@ -39,28 +39,41 @@ export const BotBidsDisplay: React.FC<BotBidsDisplayProps> = ({ bids, show }) =>
 
   return (
     <Card title="🤖 Ultime Azioni Bot" className="mb-6">
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {bids.map((bid, index) => (
           <div 
             key={`${bid.agent_id}-${index}`}
-            className={`p-3 rounded-lg border ${getActionColor(bid.action)}`}
+            className={`p-4 rounded-lg border-2 transition-all duration-200 hover:shadow-md ${getActionColor(bid.action)}`}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <span className="text-xl">{getActionIcon(bid.action)}</span>
+                <span className="text-2xl">{getActionIcon(bid.action)}</span>
                 <div>
-                  <div className="font-medium">{bid.agent_id}</div>
+                  <div className="font-bold text-lg">{bid.agent_id}</div>
                   <div className="text-sm opacity-75">{getActionText(bid)}</div>
                 </div>
               </div>
               {bid.action === 'bid' && (
-                <div className="text-lg font-bold">
+                <div className="text-xl font-bold bg-white px-3 py-1 rounded-full shadow-sm">
                   €{bid.amount}
                 </div>
               )}
             </div>
           </div>
         ))}
+      </div>
+      
+      {/* Summary */}
+      <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+        <div className="flex justify-between items-center text-sm">
+          <span className="text-gray-600">
+            📊 {bids.filter(b => b.action === 'bid').length} offerte, 
+            {bids.filter(b => b.action === 'pass').length} passate
+          </span>
+          <span className="text-gray-500">
+            ⏱️ Ultimo aggiornamento: ora
+          </span>
+        </div>
       </div>
     </Card>
   );

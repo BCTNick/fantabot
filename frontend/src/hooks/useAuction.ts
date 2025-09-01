@@ -62,6 +62,20 @@ export const useAuction = () => {
       const response = await apiClient.startNextPlayer(roleFilter);
       if (response.success) {
         await refreshStatus();
+        
+        // Se l'asta è iniziata con successo, fai processare subito le offerte dei bot
+        if (!response.completed) {
+          try {
+            await new Promise(resolve => setTimeout(resolve, 500)); // Piccola pausa per stabilizzazione
+            const botResponse = await apiClient.processBotBids();
+            if (botResponse.success) {
+              await refreshStatus(); // Aggiorna lo stato dopo le offerte bot iniziali
+            }
+          } catch (botErr) {
+            console.warn('Errore nel processare offerte bot iniziali:', botErr);
+          }
+        }
+        
         return response;
       } else {
         setError(response.error || 'Errore nell\'avvio asta giocatore');
@@ -84,6 +98,22 @@ export const useAuction = () => {
       const response = await apiClient.makeBid({ agent_id: agentId, amount });
       if (response.success) {
         await refreshStatus();
+        
+        // Automaticamente processa le offerte dei bot dopo ogni offerta umana
+        try {
+          const botResponse = await apiClient.processBotBids();
+          if (botResponse.success) {
+            await refreshStatus(); // Aggiorna di nuovo lo stato dopo le offerte bot
+            return { 
+              ...response, 
+              botBids: botResponse as unknown as BotBidsResponse 
+            };
+          }
+        } catch (botErr) {
+          console.warn('Errore nel processare offerte bot:', botErr);
+          // Non blocchiamo l'offerta umana se i bot falliscono
+        }
+        
         return response;
       } else {
         setError(response.error || 'Errore nell\'offerta');
