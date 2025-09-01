@@ -3,6 +3,7 @@ import { BotBidsDisplay } from '../components/BotBidsDisplay';
 import { NextPlayerCard } from '../components/auction/NextPlayerCard';
 import { AgentsStatusCard } from '../components/auction/AgentsStatusCard';
 import type { AuctionStatus, BotBidResult, BotBidsResponse } from '../types';
+import { CurrentPlayerCard } from '../components/auction/CurrentPlayerCard';
 
 interface AuctionPageProps {
   auctionStatus: AuctionStatus;

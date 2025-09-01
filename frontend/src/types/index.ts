@@ -105,7 +105,22 @@ export interface BotBidResult {
 
 export interface BotBidsResponse {
   success: boolean;
-  bids: BotBidResult[];
-  current_price: number;
-  highest_bidder: string | null;
+  bids?: BotBidResult[];
+  error?: string;
+}
+
+export interface SearchPlayer {
+  name: string;
+  team: string;
+  role: 'GK' | 'DEF' | 'MID' | 'ATT';
+  evaluation: number;
+  standardized_evaluation?: number;
+  ranking?: number;
+}
+
+export interface SearchPlayersResponse {
+  success: boolean;
+  players: SearchPlayer[];
+  total: number;
+  error?: string;
 }

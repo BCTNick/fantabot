@@ -471,6 +471,104 @@ def get_players():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+@app.route('/api/players/search', methods=['GET'])
+def search_players():
+    """Search players by name"""
+    try:
+        query = request.args.get('q', '').strip().lower()
+        if not query:
+            return jsonify({'success': True, 'players': []})
+            
+        players = load_players_from_excel()
+        filtered_players = []
+        
+        for player in players:
+            if (query in player.name.lower() or 
+                query in player.team.lower() or
+                query in player.role.lower()):
+                
+                # Skip players already assigned
+                if player.fantasy_team and player.fantasy_team != "UNSOLD":
+                    continue
+                    
+                filtered_players.append({
+                    'name': player.name,
+                    'team': player.team,
+                    'role': player.role,
+                    'evaluation': player.evaluation,
+                    'standardized_evaluation': player.standardized_evaluation,
+                    'ranking': player.ranking
+                })
+        
+        # Sort by evaluation (highest first)
+        filtered_players.sort(key=lambda x: x['evaluation'], reverse=True)
+        
+        return jsonify({
+            'success': True,
+            'players': filtered_players[:20],  # Limit to top 20 results
+            'total': len(filtered_players)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error searching players: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/auction/start-player', methods=['POST'])
+def start_specific_player_auction():
+    """Start auction for a specific player"""
+    if not auction_api.auction:
+        return jsonify({'success': False, 'error': 'No auction session available'}), 400
+        
+    try:
+        data = request.get_json()
+        player_name = data.get('player_name')
+        
+        if not player_name:
+            return jsonify({'success': False, 'error': 'Player name is required'}), 400
+            
+        # Find the player in the list
+        players = load_players_from_excel()
+        target_player = None
+        
+        for player in players:
+            if player.name == player_name:
+                # Check if player is already assigned
+                if player.fantasy_team and player.fantasy_team != "UNSOLD":
+                    return jsonify({
+                        'success': False, 
+                        'error': f'Player {player_name} is already assigned to {player.fantasy_team}'
+                    }), 400
+                target_player = player
+                break
+                
+        if not target_player:
+            return jsonify({'success': False, 'error': f'Player {player_name} not found'}), 400
+            
+        # Set the current player for auction
+        result = auction_api.auction.start_player_auction(target_player)
+        
+        if result['success']:
+            return jsonify({
+                'success': True,
+                'message': f'Started auction for {player_name}',
+                'current_player': {
+                    'name': target_player.name,
+                    'role': target_player.role,
+                    'team': target_player.team,
+                    'evaluation': target_player.evaluation,
+                    'current_price': auction_api.auction.current_price,
+                    'highest_bidder': auction_api.auction.highest_bidder
+                }
+            })
+        else:
+            return jsonify(result), 400
+            
+    except Exception as e:
+        logger.error(f"Error starting specific player auction: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 @app.route('/api/auction/results', methods=['GET'])
 def get_auction_results():
     """Get final auction results"""

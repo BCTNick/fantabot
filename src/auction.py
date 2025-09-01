@@ -204,3 +204,26 @@ class Auction:
                 if next_player is None:
                     break
                 self.single_player(next_player)
+
+    def start_player_auction(self, player: Player):
+        """Start auction for a specific player (API version)"""
+        if player.fantasy_team and player.fantasy_team != "UNSOLD":
+            return {'success': False, 'error': f'Player {player.name} is already assigned'}
+            
+        self.current_player = player
+        self.current_price = 0
+        self.highest_bidder = None
+        
+        if self.verbose:
+            logger.info(f"\n🏆 AUCTION START: {player.name} ({player.role}) - Evaluation: {player.evaluation}")
+        
+        return {
+            'success': True,
+            'message': f'Auction started for {player.name}',
+            'player': {
+                'name': player.name,
+                'role': player.role,
+                'team': player.team,
+                'evaluation': player.evaluation
+            }
+        }

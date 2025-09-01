@@ -21,14 +21,28 @@ function App() {
     makeBid,
     processBotBids,
     finalizeAuction,
+    startPlayerAuction,
   } = useAuction();
 
-  const handleCreateAuction = async (config: CreateAuctionRequest) => {
+    const handleCreateAuction = async (config: CreateAuctionRequest): Promise<boolean> => {
     const success = await createAuction(config);
     if (success) {
       setCurrentPage('auction');
     }
     return success;
+  };
+
+  const handlePlayerSelect = async (playerName: string) => {
+    if (auctionStatus?.state === 'running' || auctionStatus?.state === 'player_auction') {
+      try {
+        const response = await startPlayerAuction(playerName);
+        if (response.success) {
+          setCurrentPage('auction');
+        }
+      } catch (err) {
+        console.error('Error starting player auction:', err);
+      }
+    }
   };
 
   const handleNewAuction = () => {
@@ -74,8 +88,14 @@ function App() {
     }
   };
 
+  const canShowSearch = auctionStatus?.state === 'running' || auctionStatus?.state === 'player_auction';
+
   return (
-    <Layout>
+    <Layout 
+      showSearch={canShowSearch}
+      onPlayerSelect={handlePlayerSelect}
+      searchLoading={loading}
+    >
       {error && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
           <div className="flex items-center">

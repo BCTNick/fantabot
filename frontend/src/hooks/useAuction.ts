@@ -178,6 +178,28 @@ export const useAuction = () => {
     }
   }, [refreshStatus, loadPlayers]);
 
+  // Inizia l'asta per un giocatore specifico
+  const startPlayerAuction = useCallback(async (playerName: string) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await apiClient.startPlayerAuction(playerName);
+      if (response.success) {
+        await refreshStatus();
+        return response;
+      } else {
+        setError(response.error || 'Errore nell\'avvio dell\'asta');
+        return response;
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Errore nell\'avvio dell\'asta');
+      return { success: false, error: err instanceof Error ? err.message : 'Errore sconosciuto' };
+    } finally {
+      setLoading(false);
+    }
+  }, [refreshStatus]);
+
   // Polling automatico dello stato
   useEffect(() => {
     let interval: number;
@@ -212,6 +234,7 @@ export const useAuction = () => {
     makeBid,
     processBotBids,
     finalizeAuction,
+    startPlayerAuction,
     refreshStatus,
     loadPlayers,
   };

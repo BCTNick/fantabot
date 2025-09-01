@@ -1,11 +1,41 @@
 import type { 
   AuctionStatus, 
-  CreateAuctionRequest, 
-  ApiResponse, 
-  Player, 
-  BidRequest,
-  AuctionResultsResponse 
+  BotBidsResponse,
+  SearchPlayersResponse,
+  Player
 } from '../types';
+
+// API request/response types
+interface ApiResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+}
+
+interface CreateAuctionRequest {
+  agents: Array<{
+    id: string;
+    type: string;
+  }>;
+  slots: {
+    GK: number;
+    DEF: number;
+    MID: number;
+    ATT: number;
+  };
+  initial_credits: number;
+}
+
+interface BidRequest {
+  agent_id: string;
+  amount: number;
+}
+
+interface AuctionResultsResponse {
+  success: boolean;
+  results?: any[];
+  error?: string;
+}
 
 const API_BASE_URL = 'http://localhost:8081/api';
 
@@ -57,7 +87,7 @@ class ApiClient {
     });
   }
 
-  async processBotBids(): Promise<ApiResponse> {
+  async processBotBids(): Promise<BotBidsResponse> {
     return this.request('/auction/bot-bids', {
       method: 'POST',
     });
@@ -71,6 +101,17 @@ class ApiClient {
 
   async getPlayers(): Promise<{ success: boolean; players: Player[]; total: number }> {
     return this.request('/players');
+  }
+
+  async searchPlayers(query: string): Promise<SearchPlayersResponse> {
+    return this.request(`/players/search?q=${encodeURIComponent(query)}`);
+  }
+
+  async startPlayerAuction(playerName: string): Promise<ApiResponse> {
+    return this.request('/auction/start-player', {
+      method: 'POST',
+      body: JSON.stringify({ player_name: playerName }),
+    });
   }
 
   async getAuctionResults(): Promise<AuctionResultsResponse> {
