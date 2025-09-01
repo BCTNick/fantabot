@@ -20,6 +20,7 @@ class Auction:
         # Rules 
         self.slots = slots.to_dict()
         self.initial_credits = initial_credits
+        self.verbose = False  # Add verbose flag for logging
 
         # Agents and listone
         self.agents = agents

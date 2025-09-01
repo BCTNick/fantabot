@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout } from './components/Layout';
 import { CreateAuctionPage } from './pages/CreateAuctionPage';
 import { AuctionPage } from './pages/AuctionPage';
@@ -12,6 +12,8 @@ type AppState = 'home' | 'create' | 'auction' | 'results';
 
 function App() {
   const [currentPage, setCurrentPage] = useState<AppState>('home');
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [restoredState, setRestoredState] = useState<string | null>(null);
   const {
     auctionStatus,
     loading,
@@ -23,6 +25,44 @@ function App() {
     finalizeAuction,
     startPlayerAuction,
   } = useAuction();
+
+  // Effetto per ripristinare lo stato della pagina al caricamento
+  useEffect(() => {
+    if (auctionStatus && !isInitialized) {
+      setIsInitialized(true);
+      
+      console.log('🔄 Ripristino stato asta:', auctionStatus.state);
+      
+      // Naviga automaticamente alla pagina corretta in base allo stato dell'asta
+      switch (auctionStatus.state) {
+        case 'created':
+          setCurrentPage('auction');
+          setRestoredState('Asta creata ripristinata');
+          break;
+        case 'running':
+          setCurrentPage('auction');
+          setRestoredState('Asta in corso ripristinata');
+          break;
+        case 'player_auction':
+          setCurrentPage('auction');
+          setRestoredState(`Asta giocatore ripristinata: ${auctionStatus.current_player?.name || 'Sconosciuto'}`);
+          break;
+        case 'completed':
+          setCurrentPage('results');
+          setRestoredState('Risultati asta ripristinati');
+          break;
+        case 'not_started':
+        default:
+          setCurrentPage('home');
+          break;
+      }
+      
+      // Rimuovi il messaggio dopo 5 secondi
+      if (auctionStatus.state !== 'not_started') {
+        setTimeout(() => setRestoredState(null), 5000);
+      }
+    }
+  }, [auctionStatus, isInitialized]);
 
     const handleCreateAuction = async (config: CreateAuctionRequest): Promise<boolean> => {
     const success = await createAuction(config);
@@ -50,6 +90,18 @@ function App() {
   };
 
   const renderContent = () => {
+    // Mostra loading mentre si sta inizializzando
+    if (!isInitialized && auctionStatus === null) {
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Ripristino stato asta...</p>
+          </div>
+        </div>
+      );
+    }
+
     // Auto-navigate based on auction state
     if (auctionStatus?.state === 'completed' && currentPage !== 'results') {
       setCurrentPage('results');
@@ -96,6 +148,16 @@ function App() {
       onPlayerSelect={handlePlayerSelect}
       searchLoading={loading}
     >
+      {/* Messaggio di ripristino stato */}
+      {restoredState && (
+        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+          <div className="flex items-center">
+            <span className="text-green-600 mr-2">✅</span>
+            <span className="text-green-800 font-medium">{restoredState}</span>
+          </div>
+        </div>
+      )}
+
       {error && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
           <div className="flex items-center">
@@ -104,7 +166,7 @@ function App() {
           </div>
         </div>
       )}
-      
+
       {renderContent()}
     </Layout>
   );

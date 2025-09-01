@@ -549,6 +549,10 @@ def start_specific_player_auction():
         result = auction_api.auction.start_player_auction(target_player)
         
         if result['success']:
+            # Update AuctionAPI state to sync with Auction object
+            auction_api.current_player = target_player
+            auction_api.auction_state = "player_auction"
+            
             return jsonify({
                 'success': True,
                 'message': f'Started auction for {player_name}',

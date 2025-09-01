@@ -14,9 +14,43 @@ export const useAuction = () => {
       const status = await apiClient.getAuctionStatus();
       setAuctionStatus(status);
       setError(null);
+      
+      // Salva lo stato nel localStorage per ripristino rapido
+      if (status && status.state !== 'not_started') {
+        localStorage.setItem('fantabot_auction_state', JSON.stringify({
+          status,
+          timestamp: Date.now()
+        }));
+      } else {
+        localStorage.removeItem('fantabot_auction_state');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Errore sconosciuto');
     }
+  }, []);
+
+  // Carica lo stato dal localStorage (se disponibile e recente)
+  const loadStoredState = useCallback(() => {
+    try {
+      const stored = localStorage.getItem('fantabot_auction_state');
+      if (stored) {
+        const { status, timestamp } = JSON.parse(stored);
+        const now = Date.now();
+        const maxAge = 30 * 60 * 1000; // 30 minuti
+        
+        // Se lo stato salvato è recente, usalo come stato iniziale
+        if (now - timestamp < maxAge && status.state !== 'not_started') {
+          setAuctionStatus(status);
+          return true;
+        } else {
+          localStorage.removeItem('fantabot_auction_state');
+        }
+      }
+    } catch (err) {
+      console.warn('Errore nel caricamento stato salvato:', err);
+      localStorage.removeItem('fantabot_auction_state');
+    }
+    return false;
   }, []);
 
   // Carica i giocatori disponibili
@@ -208,7 +242,10 @@ export const useAuction = () => {
       interval = setInterval(refreshStatus, 2000); // Aggiorna ogni 2 secondi
     };
 
-    // Carica lo stato iniziale
+    // Prima prova a caricare lo stato salvato
+    loadStoredState();
+    
+    // Poi carica sempre lo stato aggiornato dal server
     refreshStatus();
     loadPlayers();
     
@@ -222,7 +259,7 @@ export const useAuction = () => {
         clearInterval(interval);
       }
     };
-  }, [refreshStatus, loadPlayers, auctionStatus?.state]);
+  }, [refreshStatus, loadPlayers, loadStoredState, auctionStatus?.state]);
 
   return {
     auctionStatus,
