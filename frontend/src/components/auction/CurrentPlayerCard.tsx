@@ -53,6 +53,14 @@ export const CurrentPlayerCard: React.FC<CurrentPlayerCardProps> = ({
 }) => {
   const [processingBots, setProcessingBots] = useState(false);
 
+  // Imposta automaticamente l'offerta minima quando cambia il giocatore
+  React.useEffect(() => {
+    const minBid = player.current_price + 1;
+    if (bidAmount < minBid) {
+      setBidAmount(minBid);
+    }
+  }, [player.current_price, bidAmount, setBidAmount]);
+
   const handleBid = async (e: React.FormEvent) => {
     setProcessingBots(true);
     try {
@@ -116,22 +124,48 @@ export const CurrentPlayerCard: React.FC<CurrentPlayerCardProps> = ({
         <h4 className="text-lg font-semibold text-gray-700">Fai un'Offerta</h4>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-3">
             Seleziona il tuo Agente
           </label>
-          <select
-            value={selectedAgent}
-            onChange={(e) => setSelectedAgent(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            disabled={isCurrentlyBidding}
-          >
-            <option value="">Scegli un agente...</option>
+          <div className="grid grid-cols-1 gap-2">
             {humanAgents.map((agent) => (
-              <option key={agent.id} value={agent.id}>
-                {agent.id} (Crediti: €{agent.credits})
-              </option>
+              <button
+                key={agent.id}
+                type="button"
+                onClick={() => setSelectedAgent(agent.id)}
+                disabled={isCurrentlyBidding}
+                className={`w-full p-4 text-left rounded-lg border-2 transition-all duration-200 ${
+                  selectedAgent === agent.id
+                    ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200'
+                    : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                } ${isCurrentlyBidding ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                      selectedAgent === agent.id
+                        ? 'border-blue-500 bg-blue-500'
+                        : 'border-gray-300 bg-white'
+                    }`}>
+                      {selectedAgent === agent.id && (
+                        <div className="w-2 h-2 bg-white rounded-full"></div>
+                      )}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-900">{agent.id}</div>
+                      <div className="text-sm text-gray-600">Crediti disponibili</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-lg text-green-600">€{agent.credits}</div>
+                    <div className="text-xs text-gray-500">
+                      Squadra: {agent.squad_gk + agent.squad_def + agent.squad_mid + agent.squad_att}/25
+                    </div>
+                  </div>
+                </div>
+              </button>
             ))}
-          </select>
+          </div>
         </div>
 
         <div>

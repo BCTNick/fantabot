@@ -22,10 +22,18 @@ export const AuctionPage: React.FC<AuctionPageProps> = ({
   onFinalize,
   loading,
 }) => {
-  const [bidAmount, setBidAmount] = useState<number>(0);
+  const [bidAmount, setBidAmount] = useState<number>(1);
   const [selectedAgent, setSelectedAgent] = useState<string>('');
   const [roleFilter, setRoleFilter] = useState<string>('');
   const [lastBotBids, setLastBotBids] = useState<BotBidResult[]>([]);
+
+  // Aggiorna l'importo dell'offerta quando cambia il giocatore corrente
+  React.useEffect(() => {
+    if (auctionStatus.current_player) {
+      const minBid = auctionStatus.current_player.current_price + 1;
+      setBidAmount(minBid);
+    }
+  }, [auctionStatus.current_player]);
 
   const handleStartNext = async () => {
     setLastBotBids([]); // Reset bot bids when starting new player
@@ -36,7 +44,7 @@ export const AuctionPage: React.FC<AuctionPageProps> = ({
     e.preventDefault();
     if (selectedAgent && bidAmount > 0) {
       await onMakeBid(selectedAgent, bidAmount);
-      setBidAmount(auctionStatus.current_player?.current_price || 0);
+      // L'importo verrà aggiornato automaticamente dall'useEffect quando cambia current_price
     }
   };
 
