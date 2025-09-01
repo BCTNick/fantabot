@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '../UI';
+import { AgentSquadModal } from '../modals';
 import type { Agent } from '../../types';
 
 interface AgentsStatusCardProps {
@@ -37,8 +38,18 @@ const getCreditsColor = (credits: number, total: number = 1000) => {
 };
 
 export const AgentsStatusCard: React.FC<AgentsStatusCardProps> = ({ agents }) => {
+  const [selectedAgent, setSelectedAgent] = useState<{ id: string; type: string } | null>(null);
+  
   // Ordina gli agenti per crediti rimanenti (dal più alto al più basso)
   const sortedAgents = [...agents].sort((a, b) => b.credits - a.credits);
+
+  const openSquadModal = (agentId: string, agentType: string) => {
+    setSelectedAgent({ id: agentId, type: agentType });
+  };
+
+  const closeSquadModal = () => {
+    setSelectedAgent(null);
+  };
 
   return (
     <Card title="👥 Stato Partecipanti">
@@ -114,7 +125,7 @@ export const AgentsStatusCard: React.FC<AgentsStatusCardProps> = ({ agents }) =>
               </div>
               
               {/* Squad Composition */}
-              <div className="grid grid-cols-4 gap-1">
+              <div className="grid grid-cols-4 gap-1 mb-3">
                 <div className="text-center p-2 bg-yellow-100 rounded text-xs">
                   <div className="font-bold text-yellow-800">{agent.squad_gk}</div>
                   <div className="text-yellow-600">🥅 GK</div>
@@ -132,6 +143,19 @@ export const AgentsStatusCard: React.FC<AgentsStatusCardProps> = ({ agents }) =>
                   <div className="text-red-600">🎯 ATT</div>
                 </div>
               </div>
+
+              {/* View Squad Button */}
+              {totalSlots > 0 && (
+                <button
+                  onClick={() => openSquadModal(agent.id, agent.type)}
+                  className="w-full mt-2 px-3 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 flex items-center justify-center"
+                >
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                  </svg>
+                  Visualizza Rosa ({totalSlots})
+                </button>
+              )}
             </div>
           );
         })}
@@ -153,6 +177,16 @@ export const AgentsStatusCard: React.FC<AgentsStatusCardProps> = ({ agents }) =>
           </div>
         </div>
       </div>
+
+      {/* Agent Squad Modal */}
+      {selectedAgent && (
+        <AgentSquadModal
+          agentId={selectedAgent.id}
+          agentType={selectedAgent.type}
+          isOpen={!!selectedAgent}
+          onClose={closeSquadModal}
+        />
+      )}
     </Card>
   );
 };

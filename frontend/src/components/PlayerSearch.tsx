@@ -98,7 +98,7 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({ onPlayerSelect, load
           onChange={handleInputChange}
           placeholder="Cerca giocatori per nome, squadra o ruolo..."
           disabled={loading}
-          className="w-full pl-10 pr-4 py-3 text-lg"
+          className="w-full pl-10 text-black pr-4 py-3 text-lg"
         />
         <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
           {isSearching ? (

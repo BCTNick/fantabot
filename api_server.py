@@ -569,6 +569,71 @@ def start_specific_player_auction():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+@app.route('/api/agent/<agent_id>/squad', methods=['GET'])
+def get_agent_squad(agent_id: str):
+    """Get squad players for a specific agent"""
+    if not auction_api.auction:
+        return jsonify({'success': False, 'error': 'No auction available'}), 400
+        
+    try:
+        # Find the agent
+        target_agent = None
+        for agent in auction_api.auction.agents:
+            if agent.agent_id == agent_id:
+                target_agent = agent
+                break
+                
+        if not target_agent:
+            return jsonify({'success': False, 'error': f'Agent {agent_id} not found'}), 404
+            
+        # Get squad players
+        squad_players = []
+        for player in target_agent.squad:
+            squad_players.append({
+                'name': player.name,
+                'role': player.role,
+                'team': player.team,
+                'evaluation': player.evaluation,
+                'standardized_evaluation': getattr(player, 'standardized_evaluation', None),
+                'final_cost': player.final_cost
+            })
+            
+        # Organize by role
+        squad_by_role = {
+            'GK': [p for p in squad_players if p['role'] == 'GK'],
+            'DEF': [p for p in squad_players if p['role'] == 'DEF'],
+            'MID': [p for p in squad_players if p['role'] == 'MID'],
+            'ATT': [p for p in squad_players if p['role'] == 'ATT']
+        }
+        
+        # Calculate squad metrics
+        total_eval = target_agent.squad.objective(standardized=False) if hasattr(target_agent.squad, 'objective') else 0
+        total_std_eval = target_agent.squad.objective(standardized=True) if hasattr(target_agent.squad, 'objective') else 0
+        bestxi_eval = target_agent.squad.objective(bestxi=True, standardized=False) if hasattr(target_agent.squad, 'objective') else 0
+        bestxi_std_eval = target_agent.squad.objective(bestxi=True, standardized=True) if hasattr(target_agent.squad, 'objective') else 0
+        
+        return jsonify({
+            'success': True,
+            'agent_id': agent_id,
+            'agent_type': type(target_agent).__name__,
+            'squad_total': squad_players,
+            'squad_by_role': squad_by_role,
+            'metrics': {
+                'total_evaluation': total_eval,
+                'total_standardized': total_std_eval,
+                'bestxi_evaluation': bestxi_eval,
+                'bestxi_standardized': bestxi_std_eval,
+                'credits_remaining': target_agent.current_credits,
+                'credits_spent': 1000 - target_agent.current_credits,
+                'total_players': len(squad_players)
+            }
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting agent squad: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 @app.route('/api/auction/results', methods=['GET'])
 def get_auction_results():
     """Get final auction results"""
@@ -630,6 +695,7 @@ if __name__ == '__main__':
     print("  POST /api/auction/bot-bids - Process bot bids")
     print("  POST /api/auction/finalize - Finalize player auction")
     print("  GET  /api/players - Get all players")
+    print("  GET  /api/agent/<agent_id>/squad - Get agent squad")
     print("  GET  /api/auction/results - Get final results")
     print("\n🌐 Server starting on http://localhost:8081")
     print("🎯 Frontend available at: http://localhost:8081")
