@@ -40,21 +40,21 @@ logger = logging.getLogger()
 
 # Create the characteristics of the auction
 agents = [
-        HumanAgent(agent_id="cap_bestx1_balanced"),
-        HumanAgent(agent_id="cap_bestx1_aggressive"),
+        CapAgent(agent_id="cap_bestx1_balanced"),
+        CapAgent(agent_id="cap_bestx1_aggressive"),
         CapAgent(agent_id="cap_tier", cap_strategy="tier_based"),
         DynamicCapAgent(agent_id="dynamic_cap_bestx1_balanced", cap_strategy="bestxi_based", bestxi_budget=0.95),
         DynamicCapAgent(agent_id="dynamic_cap_bestx1_aggressive", cap_strategy="bestxi_based", bestxi_budget=0.99),
         DynamicCapAgent(agent_id="dynamic_cap_tier", cap_strategy="tier_based"),
-        RLDeepAgent(agent_id="RLDeepAgent", mode = "training"),
-        HumanAgent(agent_id="umano")
+        RLDeepAgent(agent_id="RLDeepAgent", mode = "cheating"),
+        RandomAgent(agent_id="random")
     ]
 random.shuffle(agents) 
 
 initial_credits = 1000
 slots = Slots()
 listone = load_players_from_excel()
-auction_type = "chiamata_vera"
+auction_type = "chiamata"
 per_ruolo = True
 
 # Create auction (but don't run yet)

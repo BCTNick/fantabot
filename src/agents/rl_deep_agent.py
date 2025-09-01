@@ -317,4 +317,19 @@ class RLDeepAgent(Agent):
             except Exception as e:
                 logger.error(f"Error in training mode: {e}")
 
+        if self.mode == "cheating":
+                scores_t0 = self.get_scores("offer_+1", current_player, current_price, highest_bidder, player_list, other_agents, mode = "t0")
+                scores_offer = self.get_scores("offer_+1", current_player, current_price, highest_bidder, player_list, other_agents, mode = "t1")
+                scores_no_bid = self.get_scores("no_offer", current_player, current_price, highest_bidder, player_list, other_agents, mode = "t1")
+
+                reward_offer = self.get_reward(scores_t0, scores_offer, "zscore")
+                logger.info(f"  Reward RLDEEPAGENT (zscore): {reward_offer}")
+                reward_no_bid = self.get_reward(scores_t0, scores_no_bid, "zscore")
+                logger.info(f"  Reward RLDEEPAGENT (zscore): {reward_no_bid}")
+
+                if reward_offer > reward_no_bid:
+                    action = "offer_+1"
+                else:
+                    action = "no_offer"
+
         return action
