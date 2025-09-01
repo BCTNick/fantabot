@@ -7,6 +7,7 @@ import sys
 import os
 from datetime import datetime
 from typing import List, Dict
+import pyttsx3
 
 # Add src to path
 sys.path.append(os.path.join(os.getcwd(), 'src'))
@@ -53,6 +54,17 @@ class FantaAuctionGUI:
         self.auction = None
         self.log_queue = queue.Queue()
         self.auction_running = False
+        
+        # Initialize TTS engine
+        try:
+            self.tts_engine = pyttsx3.init()
+            self.tts_engine.setProperty('rate', 150)  # Speed of speech
+            self.tts_engine.setProperty('volume', 0.9)  # Volume level (0.0 to 1.0)
+            self.tts_available = True
+        except:
+            self.tts_engine = None
+            self.tts_available = False
+            print("Warning: TTS engine not available")
         
         # Available agent types
         self.agent_types = {
@@ -167,15 +179,24 @@ class FantaAuctionGUI:
         ttk.Button(add_agent_frame, text="Aggiungi Agente", command=self.add_agent).pack(side=tk.LEFT, padx=(5, 0))
         
         # Agents list
-        self.agents_tree = ttk.Treeview(agents_group, columns=("Type",), show="tree headings", height=8)
+        self.agents_tree = ttk.Treeview(agents_group, columns=("Type", "TTS"), show="tree headings", height=8)
         self.agents_tree.heading("#0", text="Nome Agente")
         self.agents_tree.heading("Type", text="Tipo")
-        self.agents_tree.column("#0", width=200)
-        self.agents_tree.column("Type", width=150)
+        self.agents_tree.heading("TTS", text="TTS")
+        self.agents_tree.column("#0", width=150)
+        self.agents_tree.column("Type", width=120)
+        self.agents_tree.column("TTS", width=50)
         self.agents_tree.pack(fill=tk.BOTH, expand=True, pady=(0, 5))
         
-        # Remove agent button
-        ttk.Button(agents_group, text="Rimuovi Agente Selezionato", command=self.remove_agent).pack()
+        # Agent control buttons frame
+        agent_controls_frame = ttk.Frame(agents_group)
+        agent_controls_frame.pack(fill=tk.X, pady=(5, 0))
+        
+        ttk.Button(agent_controls_frame, text="Rimuovi Agente Selezionato", command=self.remove_agent).pack(side=tk.LEFT)
+        
+        # TTS toggle button
+        if self.tts_available:
+            ttk.Button(agent_controls_frame, text="Toggle TTS", command=self.toggle_agent_tts).pack(side=tk.LEFT, padx=(10, 0))
         
         # Pack canvas and scrollbar
         canvas.pack(side="left", fill="both", expand=True)
@@ -325,15 +346,16 @@ class FantaAuctionGUI:
     def add_default_agents(self):
         """Add some default agents"""
         default_agents = [
-            ("Angelo", "Human Agent"),
-            ("Andrea", "Human Agent"),
-            ("Bot Cap", "Cap Agent"),
-            ("Bot Random", "Random Agent")
+            ("Angelo", "Human Agent", True),
+            ("Andrea", "Human Agent", True),
+            ("Bot Cap", "Cap Agent", True),
+            ("Bot Random", "Random Agent", False)
         ]
         
-        for name, agent_type in default_agents:
-            self.agents_config.append({"name": name, "type": agent_type})
-            self.agents_tree.insert("", tk.END, text=name, values=(agent_type,))
+        for name, agent_type, tts_enabled in default_agents:
+            self.agents_config.append({"name": name, "type": agent_type, "tts_enabled": tts_enabled})
+            tts_text = "✓" if tts_enabled else "✗"
+            self.agents_tree.insert("", tk.END, text=name, values=(agent_type, tts_text))
     
     def add_agent(self):
         """Add a new agent to the configuration"""
@@ -349,8 +371,12 @@ class FantaAuctionGUI:
             messagebox.showerror("Errore", f"Un agente con nome '{name}' esiste già")
             return
         
-        self.agents_config.append({"name": name, "type": agent_type})
-        self.agents_tree.insert("", tk.END, text=name, values=(agent_type,))
+        # Default TTS enabled for human agents, disabled for bots
+        tts_enabled = (agent_type == "Human Agent")
+        
+        self.agents_config.append({"name": name, "type": agent_type, "tts_enabled": tts_enabled})
+        tts_text = "✓" if tts_enabled else "✗"
+        self.agents_tree.insert("", tk.END, text=name, values=(agent_type, tts_text))
         
         # Clear the input
         self.agent_name_var.set("")
@@ -370,6 +396,87 @@ class FantaAuctionGUI:
         
         # Remove from tree
         self.agents_tree.delete(item)
+    
+    def toggle_agent_tts(self):
+        """Toggle TTS for selected agent"""
+        selection = self.agents_tree.selection()
+        if not selection:
+            messagebox.showwarning("Attenzione", "Seleziona un agente per modificare il TTS")
+            return
+        
+        item = selection[0]
+        agent_name = self.agents_tree.item(item, "text")
+        
+        # Find and toggle TTS in config
+        for agent in self.agents_config:
+            if agent["name"] == agent_name:
+                agent["tts_enabled"] = not agent["tts_enabled"]
+                
+                # Update tree display
+                current_values = list(self.agents_tree.item(item, "values"))
+                current_values[1] = "✓" if agent["tts_enabled"] else "✗"
+                self.agents_tree.item(item, values=current_values)
+                break
+    
+    def speak_message(self, agent_name, message):
+        """Speak a message using TTS if enabled for the agent"""
+        if not self.tts_available:
+            return
+        
+        # Check if TTS is enabled for this agent
+        agent_config = next((agent for agent in self.agents_config if agent["name"] == agent_name), None)
+        if not agent_config or not agent_config.get("tts_enabled", False):
+            return
+        
+        # Clean the message for TTS (remove emojis and special characters)
+        clean_message = self.clean_message_for_tts(message, agent_name)
+        
+        if clean_message:
+            # Run TTS in a separate thread to avoid blocking the GUI
+            def tts_worker():
+                try:
+                    self.tts_engine.say(clean_message)
+                    self.tts_engine.runAndWait()
+                except:
+                    pass  # Ignore TTS errors
+            
+            tts_thread = threading.Thread(target=tts_worker, daemon=True)
+            tts_thread.start()
+    
+    def clean_message_for_tts(self, message, agent_name):
+        """Clean a log message for TTS output"""
+        import re
+        
+        # Remove emoji and special characters
+        clean_msg = re.sub(r'[^\w\s\-:.,!?]', '', message)
+        
+        # Extract relevant parts for different message types
+        if "offre" in clean_msg.lower() and agent_name in clean_msg:
+            # For bid messages like "💰 Angelo offre 50 crediti"
+            match = re.search(rf'{re.escape(agent_name)}\s+offre\s+(\d+)\s+crediti', clean_msg)
+            if match:
+                amount = match.group(1)
+                return f"{agent_name} offre {amount} crediti"
+        
+        elif "non offre" in clean_msg.lower() and agent_name in clean_msg:
+            # For no bid messages like "🚫 Angelo non offre"
+            return f"{agent_name} non offre"
+        
+        elif "assegnato a" in clean_msg.lower() and agent_name in clean_msg:
+            # For assignment messages
+            match = re.search(r'(\w+)\s+assegnato\s+a\s+' + re.escape(agent_name) + r'\s+per\s+(\d+)\s+crediti', clean_msg)
+            if match:
+                player_name = match.group(1)
+                amount = match.group(2)
+                return f"{player_name} assegnato a {agent_name} per {amount} crediti"
+        
+        # If no specific pattern matches, return cleaned general message if it contains agent name
+        if agent_name.lower() in clean_msg.lower():
+            # Limit length for TTS
+            clean_msg = clean_msg[:100]
+            return clean_msg
+        
+        return ""
     
     def create_agents(self):
         """Create agent instances from configuration"""
@@ -753,11 +860,26 @@ class FantaAuctionGUI:
                     self.auction_info_text.see(tk.END)
                     self.auction_info_text.config(state=tk.DISABLED)
                 
+                # Check if this message should trigger TTS for any agent
+                self.process_message_for_tts(message)
+                
         except queue.Empty:
             pass
         
         # Schedule next check
         self.root.after(100, self.check_log_queue)
+    
+    def process_message_for_tts(self, message):
+        """Process a log message to determine if TTS should be triggered"""
+        if not self.tts_available or not self.auction_running:
+            return
+        
+        # Check each agent to see if the message is about them
+        for agent_config in self.agents_config:
+            agent_name = agent_config["name"]
+            if agent_name in message:
+                self.speak_message(agent_name, message)
+                break  # Only speak for the first matching agent to avoid duplicates
     
     def clear_logs(self):
         """Clear the log display"""

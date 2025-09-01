@@ -6,6 +6,9 @@ pandas>=1.5.0
 numpy>=1.21.0
 openpyxl>=3.0.0  # For Excel file reading
 
+# TTS (Text-to-Speech) support
+pyttsx3>=2.90  # Cross-platform text-to-speech library
+
 # GUI is built with tkinter which comes with Python standard library
 # No additional GUI dependencies needed
 
