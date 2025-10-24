@@ -5,9 +5,9 @@ Auction system
 import random
 import logging
 from typing import List, Dict
-from agents.human_agent import HumanAgent
-from models import Player, Slots
-from agents.agent_class import Agent
+from src.agents.human_agent import HumanAgent
+from src.models import Player, Slots
+from src.agents.agent_class import Agent
 
 # Get logger
 logger = logging.getLogger(__name__)

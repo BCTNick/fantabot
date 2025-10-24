@@ -1,0 +1,71 @@
+% Come citare le parole del glossario nel testo:
+% \gls{ai} → "Artificial Intelligence (AI)" prima volta, poi "AI"
+% \glspl{disposizione} → plurale: "disposizioni"
+% \Gls{ml} → con maiuscola iniziale
+% \glsfirst{ai} → forza sempre la forma estesa
+% \glsshort{ai} → forza solo la forma breve: "AI"
+% \glslong{ai} → forza solo la forma estesa: "Artificial Intelligence"
+
+% ========== Regular terms (non-acronyms)  ==========
+\newglossaryentry{corpus_normativo}{
+    name=corpus normativo,
+    description={Insieme completo e organizzato di tutte le norme giuridiche che regolano un determinato ordinamento o una specifica materia}
+}
+
+\newglossaryentry{disposizione}{
+    name=disposizione,
+    plural=disposizioni,
+    description={Singolo precetto o comando normativo contenuto all'interno di un atto normativo più ampio (e di cui, quindi, le disposizioni sono le unità minime, spesso ma non necessariamente coincidendo con articoli o commi)}
+}
+
+\newglossaryentry{legge}{
+    name=legge,
+    description={Atto normativo formale emanato dal potere legislativo secondo procedure costituzionalmente stabilite}
+}
+
+\newglossaryentry{linguaggio naturale}{
+    name=linguaggio naturale,
+    description={Sistema di comunicazione usato spontaneamente dagli esseri umani, come l’italiano o l’inglese, ricco e flessibile ma spesso ambiguo.}
+}
+
+\newglossaryentry{linguaggio formale}{
+    name=linguaggio formale,
+    description={Linguaggio artificiale definito da un insieme preciso di simboli e regole, creato per eliminare ambiguità e descrivere concetti in modo rigoroso (es. matematica, logica, programmazione).}
+}
+
+
+% ========== Acronyms ==========
+\newacronym{ai}{AI}{Artificial Intelligence}
+\newglossaryentry{ai-def}{
+    name=Artificial Intelligence,
+    description={Sistema tecnologico che simula processi cognitivi umani per risolvere problemi complessi attraverso algoritmi e machine learning},
+    see=[Acronym:]{ai}
+}
+
+\newacronym{dl}{DL}{Deep Learning}
+\newglossaryentry{dl-def}{
+    name=Deep Learning,
+    description={Sottocampo del machine learning che utilizza reti neurali artificiali con molteplici strati per apprendere rappresentazioni complesse dei dati},
+    see=[Acronym:]{dl}
+}
+
+\newacronym{llm}{LLM}{Large Language Model}
+\newglossaryentry{llm-def}{
+    name=Large Language Model,
+    description={Modello di intelligenza artificiale basato su reti neurali profonde, addestrato su enormi quantità di testo per comprendere e generare linguaggio naturale. Utilizza architetture transformer e tecniche di apprendimento automatico per elaborare, analizzare e produrre testo in modo contestualmente appropriato},
+    see=[Acronym:]{llm}}
+
+
+\newacronym{ml}{ML}{Machine Learning}
+\newglossaryentry{ml-def}{
+    name=Machine Learning,
+    description={Branca dell'intelligenza artificiale che permette ai computer di apprendere e migliorare automaticamente attraverso l'esperienza senza essere esplicitamente programmati},
+    see=[Acronym:]{ml}
+}
+
+\newacronym{nlp}{NLP}{Natural Language Processing}
+\newglossaryentry{nlp-def}{
+    name=Natural Language Processing,
+    description={Campo dell'intelligenza artificiale che si occupa dell'interazione tra computer e linguaggio umano, permettendo alle macchine di comprendere, interpretare e generare testo naturale},
+    see=[Acronym:]{nlp}
+}

@@ -1,0 +1,9 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
+\contentsline {section}{\numberline {2}Background and Related Work}{3}{section.2}%
+\contentsline {section}{\numberline {3}Modeling the Auction Environment}{3}{section.3}%
+\contentsline {section}{\numberline {4}Policy--Value Network Architecture}{3}{section.4}%
+\contentsline {section}{\numberline {5}Experiments and Results}{3}{section.5}%
+\contentsline {section}{\numberline {6}Discussion and Future Work}{4}{section.6}%
+\contentsline {section}{\numberline {7}Conclusion}{4}{section.7}%
+\contentsline {section}{Bibliografia}{6}{section*.2}%

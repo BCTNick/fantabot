@@ -1,0 +1,179 @@
+% WRITE THIS IN THE TERMINAL
+
+% pdflatex -interaction=nonstopmode main.tex
+% makeglossaries main
+% biber main
+% pdflatex -interaction=nonstopmode main.tex
+% pdflatex -interaction=nonstopmode main.tex
+
+\documentclass[12pt]{article}
+
+% --- Encoding and Input ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+
+% --- Math Packages ---
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{mathrsfs}
+\usepackage{IEEEtrantools} % For aligned formulas
+
+% --- Custom Math Operators ---
+\DeclareMathOperator{\logit}{logit}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+% --- Layout and Page Setup ---
+\usepackage[a4paper, left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm]{geometry}
+\usepackage[headings]{fullpage}
+
+% --- Table Packages ---
+\usepackage{booktabs}         % For professional-looking tables
+\usepackage{caption}          % For customizing captions
+\usepackage[flushleft]{threeparttable} % For notes below tables
+
+% --- Code Listings ---
+\usepackage{listings}
+\usepackage{xcolor}
+\definecolor{lightblue}{rgb}{0.9, 0.95, 1} % Custom background color for code
+
+\lstset{
+  language=R,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!50!black},
+  stringstyle=\color{red},
+  backgroundcolor=\color{lightblue},
+  breaklines=true,
+  showstringspaces=false,
+  numbers=none
+}
+
+% --- Graphics and Floating Elements ---
+\usepackage{graphicx}
+\usepackage{float}           % Improved float placement
+
+% --- Referencing and Hyperlinks ---
+\usepackage{hyperref}
+
+% --- Glossary ---
+\usepackage[acronym, toc]{glossaries}
+\makeglossaries
+\input{glossary} % Importa le definizioni dal file separato
+\renewcommand*{\glssymbol}[1]{\space(#1)}
+
+% --- Bibliography ---
+\usepackage{csquotes}
+\usepackage[
+    backend=biber,
+    style=apa,
+    maxcitenames=2,
+    mincitenames=1,
+    sorting=ynt
+]{biblatex}
+\addbibresource{bibfile.bib}
+
+% --- Page Headers and Footers ---
+\usepackage{fancyhdr}
+\setlength{\headheight}{15pt}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{Scognamiglio Nicola}
+\rfoot{Page \thepage}
+
+% --- Miscellaneous ---
+\usepackage{comment}
+
+
+
+\begin{document}
+
+\begin{titlepage}
+        \centering % Center all text
+        \vspace*{\baselineskip} % White space at the top of the page
+        
+        {\huge Policy-Value Network for Budget Constrained Sequential Multi-Item English Auction}\\[0.2\baselineskip] % Title
+        
+        
+        \vspace*{\baselineskip}
+        
+        {\Large --- Machine Learning Project ---\\}
+
+        \vspace*{\baselineskip}
+        
+        {\LARGE Scognamiglio Nicola\\[\baselineskip]} % Editor list  
+        
+        \vspace*{\baselineskip}
+
+        \vfill
+        
+        Napoli, 2025 \par % Location and year
+        
+        \vspace*{\baselineskip}
+
+        {\itshape Università degli Studi di Napoli - Federico II\par} % Editor affiliation
+    \end{titlepage}
+
+
+\tableofcontents
+\clearpage
+
+
+\begin{abstract}
+kkkkk
+\end{abstract}
+\clearpage
+
+
+\section{Introduction}
+
+In fantasy football leagues, player selection often occurs through an auction mechanism in which participants bid for multiple players sequentially while managing a limited budget. 
+This setting can be formally modeled as a \textit{budget-constrained sequential multi-item English auction}, where each agent must strategically allocate resources across rounds, balancing between immediate opportunities and long-term goals.
+
+Traditional auction theory provides analytical insights into single-item or simultaneous multi-item settings, but real-world fantasy football drafts introduce additional complexity. 
+Agents must reason dynamically under uncertainty, learning optimal bidding policies as new information (such as opponents’ remaining budgets or players’ availability) unfolds.
+
+Recent advances in artificial intelligence, particularly in reinforcement learning, have demonstrated how \textit{policy--value networks} can learn to approximate optimal strategies in complex sequential decision problems. 
+Inspired by models such as AlphaZero, this work proposes to apply a policy--value approach to auction environments, enabling agents to make data-driven and adaptive bidding decisions.
+
+The objective of this study is to explore how a policy--value network can be designed, trained, and evaluated within the fantasy football auction framework. 
+The research combines concepts from auction theory, machine learning, and game theory to provide a computational perspective on strategic resource allocation under constraints.
+
+\section{Background and Related Work}
+
+This section will review the theoretical foundations of English auctions, budget constraints, and sequential decision-making, as well as related work in deep reinforcement learning and auction design.
+
+\section{Modeling the Auction Environment}
+
+Describe the auction setup, bidding rules, and constraints. Define the state space, actions, and reward functions.
+
+\section{Policy--Value Network Architecture}
+
+Explain the neural network design, input representation, and training algorithm.
+
+\section{Experiments and Results}
+
+Summarize simulation setup, performance metrics, and comparison with baseline bidding strategies.
+
+\section{Discussion and Future Work}
+
+Discuss findings, limitations, and possible extensions such as incorporating opponent modeling or real fantasy football data.
+
+\section{Conclusion}
+
+Conclude with the main insights on how policy--value methods can enhance bidding efficiency and fairness in sequential auction environments.
+
+% Stampa il glossario 
+\clearpage
+\glsaddall% Mostra tutti i termini definiti anche se non usati
+\printglossary[type=main, title=Glossario, nonumberlist]
+% Stampa il glossario degli acronimi
+\printglossary[type=\acronymtype, title=Acronimi, nonumberlist]
+
+% Stampa bibliografia
+\newpage
+\nocite{*}
+\printbibliography[title=Bibliografia, heading=bibintoc]
+\end{document}

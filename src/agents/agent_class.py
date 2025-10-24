@@ -31,5 +31,5 @@ class Agent:
 
 class RandomAgent(Agent):
     def make_offer_decision(self, current_player, current_price, highest_bidder, player_list, other_agents) -> str:
-        return "offer_+1" if random.random() < 0.5 else "no_offer"
+        return "offer_+1" if random.random() < 0.2 else "no_offer"
 

@@ -1,0 +1,473 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{ynt/apasortcite//global/global/global}
+    \entry{sartor2022intelligenza}{book}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ba6d4e83b80563f1a6dc08f99548f3b5}{%
+           family={Sartor},
+           familyi={S\bibinitperiod},
+           given={Giovanni},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Giappichelli}%
+      }
+      \strng{namehash}{91605b91199d10bcb236fefa4e6ff2ff}
+      \strng{fullhash}{91605b91199d10bcb236fefa4e6ff2ff}
+      \strng{fullhashraw}{91605b91199d10bcb236fefa4e6ff2ff}
+      \strng{bibnamehash}{91605b91199d10bcb236fefa4e6ff2ff}
+      \strng{authorbibnamehash}{91605b91199d10bcb236fefa4e6ff2ff}
+      \strng{authornamehash}{91605b91199d10bcb236fefa4e6ff2ff}
+      \strng{authorfullhash}{91605b91199d10bcb236fefa4e6ff2ff}
+      \strng{authorfullhashraw}{91605b91199d10bcb236fefa4e6ff2ff}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{L'intelligenza artificiale e il diritto}
+      \field{year}{2022}
+      \true{nocite}
+    \endentry
+    \entry{hassan2023brief}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=492bcc80f5787e645b6c8ced17702429}{%
+           family={Hassan},
+           familyi={H\bibinitperiod},
+           given={Hammad},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{institution}{1}{%
+        {COMSATS University Islamabad}%
+      }
+      \strng{namehash}{492bcc80f5787e645b6c8ced17702429}
+      \strng{fullhash}{492bcc80f5787e645b6c8ced17702429}
+      \strng{fullhashraw}{492bcc80f5787e645b6c8ced17702429}
+      \strng{bibnamehash}{492bcc80f5787e645b6c8ced17702429}
+      \strng{authorbibnamehash}{492bcc80f5787e645b6c8ced17702429}
+      \strng{authornamehash}{492bcc80f5787e645b6c8ced17702429}
+      \strng{authorfullhash}{492bcc80f5787e645b6c8ced17702429}
+      \strng{authorfullhashraw}{492bcc80f5787e645b6c8ced17702429}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{9}
+      \field{note}{Research publication on the comprehensive history of NLP development}
+      \field{title}{Brief History of Natural Language Processor (NLP)}
+      \field{year}{2023}
+      \true{nocite}
+    \endentry
+    \entry{ariai2024natural}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=983d6a95bd0ab4174ebb1dbd58866636}{%
+           family={Ariai},
+           familyi={A\bibinitperiod},
+           given={Farid},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9d21e1a6d0c91228f82e027fe1117f2d}{%
+           family={Demartini},
+           familyi={D\bibinitperiod},
+           given={Gianluca},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{553ad4cacf65e93e88ed254c93cfae9e}
+      \strng{fullhash}{553ad4cacf65e93e88ed254c93cfae9e}
+      \strng{fullhashraw}{553ad4cacf65e93e88ed254c93cfae9e}
+      \strng{bibnamehash}{553ad4cacf65e93e88ed254c93cfae9e}
+      \strng{authorbibnamehash}{553ad4cacf65e93e88ed254c93cfae9e}
+      \strng{authornamehash}{553ad4cacf65e93e88ed254c93cfae9e}
+      \strng{authorfullhash}{553ad4cacf65e93e88ed254c93cfae9e}
+      \strng{authorfullhashraw}{553ad4cacf65e93e88ed254c93cfae9e}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{arXiv preprint arXiv:2410.21306}
+      \field{title}{Natural Language Processing for the Legal Domain: A Survey of Tasks, Datasets, Models, and Challenges}
+      \field{year}{2024}
+      \true{nocite}
+    \endentry
+    \entry{ganguly2024legal}{article}{}{}
+      \name{author}{8}{}{%
+        {{un=0,uniquepart=base,hash=66a15b859d343ab35b5e4546fb677172}{%
+           family={Ganguly},
+           familyi={G\bibinitperiod},
+           given={Debasis},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=20df41e6556b3d36196b7e5cf8d68e5c}{%
+           family={Conrad},
+           familyi={C\bibinitperiod},
+           given={Jack\bibnamedelima G.},
+           giveni={J\bibinitperiod\bibinitdelim G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=45724464df7ed6d504e7dc91fb12689a}{%
+           family={Ghosh},
+           familyi={G\bibinitperiod},
+           given={Kripabandhu},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=774457d50d919c98a5a2094951ce31e7}{%
+           family={Ghosh},
+           familyi={G\bibinitperiod},
+           given={Saptarshi},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b87299f2c919ece4ec38ac446895f968}{%
+           family={Goyal},
+           familyi={G\bibinitperiod},
+           given={Pawan},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a2976232372f2a3eb1cbf1ba2eb7200e}{%
+           family={Bhattacharya},
+           familyi={B\bibinitperiod},
+           given={Paheli},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=25cba2c37b4edfae0c93425a00f399ee}{%
+           family={Nigam},
+           familyi={N\bibinitperiod},
+           given={Shubham\bibnamedelima Kumar},
+           giveni={S\bibinitperiod\bibinitdelim K\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ef543ca6ad2ba4de8b3c9cac5bd74984}{%
+           family={Paul},
+           familyi={P\bibinitperiod},
+           given={Shounak},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{123a8516501eb3a42535410402bcc0d1}
+      \strng{fullhash}{45dafa98df22c00d527aae5914044790}
+      \strng{fullhashraw}{45dafa98df22c00d527aae5914044790}
+      \strng{bibnamehash}{45dafa98df22c00d527aae5914044790}
+      \strng{authorbibnamehash}{45dafa98df22c00d527aae5914044790}
+      \strng{authornamehash}{123a8516501eb3a42535410402bcc0d1}
+      \strng{authorfullhash}{45dafa98df22c00d527aae5914044790}
+      \strng{authorfullhashraw}{45dafa98df22c00d527aae5914044790}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Tutorial}
+      \field{note}{Tutorial on AI \& Law, Legal Data Analytics, Natural Language Processing, Legal Information Retrieval}
+      \field{title}{Legal IR and NLP: the History, Challenges, and State-of-the-Art}
+      \field{year}{2024}
+      \true{nocite}
+    \endentry
+    \entry{siino2025exploring}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=cdeeafb7be0412ea14d1a23f4e75c4ba}{%
+           family={Siino},
+           familyi={S\bibinitperiod},
+           given={Marco},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bce8e96b560cde0ec19a435966453e1d}{%
+           family={Falco},
+           familyi={F\bibinitperiod},
+           given={Mariana},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f14ac235940672a0449c633ce8d772db}{%
+           family={Croce},
+           familyi={C\bibinitperiod},
+           given={Daniele},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=11e1a66b6389aa20a1f5baddeaea8d42}{%
+           family={Rosso},
+           familyi={R\bibinitperiod},
+           given={Paolo},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{bd8d9a70c90cf91431d251b88b0344af}
+      \strng{fullhash}{5ac129d5214dd9d1d3346a8327c1ac3b}
+      \strng{fullhashraw}{5ac129d5214dd9d1d3346a8327c1ac3b}
+      \strng{bibnamehash}{5ac129d5214dd9d1d3346a8327c1ac3b}
+      \strng{authorbibnamehash}{5ac129d5214dd9d1d3346a8327c1ac3b}
+      \strng{authornamehash}{bd8d9a70c90cf91431d251b88b0344af}
+      \strng{authorfullhash}{5ac129d5214dd9d1d3346a8327c1ac3b}
+      \strng{authorfullhashraw}{5ac129d5214dd9d1d3346a8327c1ac3b}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Access}
+      \field{title}{Exploring LLMs Applications in Law: A Literature Review on Current Legal NLP Approaches}
+      \field{year}{2025}
+      \true{nocite}
+    \endentry
+  \enddatalist
+  \datalist[entry]{ynt/global//global/global/global}
+    \entry{sartor2022intelligenza}{book}{}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=ba6d4e83b80563f1a6dc08f99548f3b5}{%
+           family={Sartor},
+           familyi={S\bibinitperiod},
+           given={Giovanni},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {Giappichelli}%
+      }
+      \strng{namehash}{91605b91199d10bcb236fefa4e6ff2ff}
+      \strng{fullhash}{91605b91199d10bcb236fefa4e6ff2ff}
+      \strng{fullhashraw}{91605b91199d10bcb236fefa4e6ff2ff}
+      \strng{bibnamehash}{91605b91199d10bcb236fefa4e6ff2ff}
+      \strng{authorbibnamehash}{91605b91199d10bcb236fefa4e6ff2ff}
+      \strng{authornamehash}{91605b91199d10bcb236fefa4e6ff2ff}
+      \strng{authorfullhash}{91605b91199d10bcb236fefa4e6ff2ff}
+      \strng{authorfullhashraw}{91605b91199d10bcb236fefa4e6ff2ff}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{L'intelligenza artificiale e il diritto}
+      \field{year}{2022}
+      \true{nocite}
+    \endentry
+    \entry{hassan2023brief}{article}{}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=492bcc80f5787e645b6c8ced17702429}{%
+           family={Hassan},
+           familyi={H\bibinitperiod},
+           given={Hammad},
+           giveni={H\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{institution}{1}{%
+        {COMSATS University Islamabad}%
+      }
+      \strng{namehash}{492bcc80f5787e645b6c8ced17702429}
+      \strng{fullhash}{492bcc80f5787e645b6c8ced17702429}
+      \strng{fullhashraw}{492bcc80f5787e645b6c8ced17702429}
+      \strng{bibnamehash}{492bcc80f5787e645b6c8ced17702429}
+      \strng{authorbibnamehash}{492bcc80f5787e645b6c8ced17702429}
+      \strng{authornamehash}{492bcc80f5787e645b6c8ced17702429}
+      \strng{authorfullhash}{492bcc80f5787e645b6c8ced17702429}
+      \strng{authorfullhashraw}{492bcc80f5787e645b6c8ced17702429}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{9}
+      \field{note}{Research publication on the comprehensive history of NLP development}
+      \field{title}{Brief History of Natural Language Processor (NLP)}
+      \field{year}{2023}
+      \true{nocite}
+    \endentry
+    \entry{ariai2024natural}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=983d6a95bd0ab4174ebb1dbd58866636}{%
+           family={Ariai},
+           familyi={A\bibinitperiod},
+           given={Farid},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=9d21e1a6d0c91228f82e027fe1117f2d}{%
+           family={Demartini},
+           familyi={D\bibinitperiod},
+           given={Gianluca},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{553ad4cacf65e93e88ed254c93cfae9e}
+      \strng{fullhash}{553ad4cacf65e93e88ed254c93cfae9e}
+      \strng{fullhashraw}{553ad4cacf65e93e88ed254c93cfae9e}
+      \strng{bibnamehash}{553ad4cacf65e93e88ed254c93cfae9e}
+      \strng{authorbibnamehash}{553ad4cacf65e93e88ed254c93cfae9e}
+      \strng{authornamehash}{553ad4cacf65e93e88ed254c93cfae9e}
+      \strng{authorfullhash}{553ad4cacf65e93e88ed254c93cfae9e}
+      \strng{authorfullhashraw}{553ad4cacf65e93e88ed254c93cfae9e}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{arXiv preprint arXiv:2410.21306}
+      \field{title}{Natural Language Processing for the Legal Domain: A Survey of Tasks, Datasets, Models, and Challenges}
+      \field{year}{2024}
+      \true{nocite}
+    \endentry
+    \entry{ganguly2024legal}{article}{}{}
+      \name{author}{8}{}{%
+        {{un=0,uniquepart=base,hash=66a15b859d343ab35b5e4546fb677172}{%
+           family={Ganguly},
+           familyi={G\bibinitperiod},
+           given={Debasis},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=20df41e6556b3d36196b7e5cf8d68e5c}{%
+           family={Conrad},
+           familyi={C\bibinitperiod},
+           given={Jack\bibnamedelima G.},
+           giveni={J\bibinitperiod\bibinitdelim G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=45724464df7ed6d504e7dc91fb12689a}{%
+           family={Ghosh},
+           familyi={G\bibinitperiod},
+           given={Kripabandhu},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=774457d50d919c98a5a2094951ce31e7}{%
+           family={Ghosh},
+           familyi={G\bibinitperiod},
+           given={Saptarshi},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=b87299f2c919ece4ec38ac446895f968}{%
+           family={Goyal},
+           familyi={G\bibinitperiod},
+           given={Pawan},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a2976232372f2a3eb1cbf1ba2eb7200e}{%
+           family={Bhattacharya},
+           familyi={B\bibinitperiod},
+           given={Paheli},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=25cba2c37b4edfae0c93425a00f399ee}{%
+           family={Nigam},
+           familyi={N\bibinitperiod},
+           given={Shubham\bibnamedelima Kumar},
+           giveni={S\bibinitperiod\bibinitdelim K\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ef543ca6ad2ba4de8b3c9cac5bd74984}{%
+           family={Paul},
+           familyi={P\bibinitperiod},
+           given={Shounak},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{123a8516501eb3a42535410402bcc0d1}
+      \strng{fullhash}{45dafa98df22c00d527aae5914044790}
+      \strng{fullhashraw}{45dafa98df22c00d527aae5914044790}
+      \strng{bibnamehash}{45dafa98df22c00d527aae5914044790}
+      \strng{authorbibnamehash}{45dafa98df22c00d527aae5914044790}
+      \strng{authornamehash}{123a8516501eb3a42535410402bcc0d1}
+      \strng{authorfullhash}{45dafa98df22c00d527aae5914044790}
+      \strng{authorfullhashraw}{45dafa98df22c00d527aae5914044790}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Tutorial}
+      \field{note}{Tutorial on AI \& Law, Legal Data Analytics, Natural Language Processing, Legal Information Retrieval}
+      \field{title}{Legal IR and NLP: the History, Challenges, and State-of-the-Art}
+      \field{year}{2024}
+      \true{nocite}
+    \endentry
+    \entry{siino2025exploring}{article}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=cdeeafb7be0412ea14d1a23f4e75c4ba}{%
+           family={Siino},
+           familyi={S\bibinitperiod},
+           given={Marco},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bce8e96b560cde0ec19a435966453e1d}{%
+           family={Falco},
+           familyi={F\bibinitperiod},
+           given={Mariana},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=f14ac235940672a0449c633ce8d772db}{%
+           family={Croce},
+           familyi={C\bibinitperiod},
+           given={Daniele},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=11e1a66b6389aa20a1f5baddeaea8d42}{%
+           family={Rosso},
+           familyi={R\bibinitperiod},
+           given={Paolo},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {IEEE}%
+      }
+      \strng{namehash}{bd8d9a70c90cf91431d251b88b0344af}
+      \strng{fullhash}{5ac129d5214dd9d1d3346a8327c1ac3b}
+      \strng{fullhashraw}{5ac129d5214dd9d1d3346a8327c1ac3b}
+      \strng{bibnamehash}{5ac129d5214dd9d1d3346a8327c1ac3b}
+      \strng{authorbibnamehash}{5ac129d5214dd9d1d3346a8327c1ac3b}
+      \strng{authornamehash}{bd8d9a70c90cf91431d251b88b0344af}
+      \strng{authorfullhash}{5ac129d5214dd9d1d3346a8327c1ac3b}
+      \strng{authorfullhashraw}{5ac129d5214dd9d1d3346a8327c1ac3b}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Access}
+      \field{title}{Exploring LLMs Applications in Law: A Literature Review on Current Legal NLP Approaches}
+      \field{year}{2025}
+      \true{nocite}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

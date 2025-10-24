@@ -1,0 +1,138 @@
+2025-08-28 20:16:02,113 - INFO - === TRAINING SESSION STARTED ===
+2025-08-28 20:16:02,113 - INFO - Starting new training session
+2025-08-28 20:16:02,113 - INFO - Training directory: c:\Users\huawei\Music\fantabot\src\agents\model_rl_deep_agent\weights\no_spin
+2025-08-28 20:16:02,113 - INFO - Episode auctions per episode: 1
+2025-08-28 20:16:02,113 - INFO - Starting from episode 1, auction counter will start from 0
+2025-08-28 20:16:02,114 - INFO - === EPISODE 1 STARTED ===
+2025-08-28 20:16:02,114 - INFO - Using random weights (first episode)
+2025-08-28 20:16:04,005 - INFO - Auction 1: participants=12, credits=10000, type=random, per_ruolo=True
+2025-08-28 20:16:54,194 - INFO - Auction 1 weighted results (w=1.000): RL=1.157 | cap=1.481 | cap=1.924 | dynamic=0.729 | dynamic=1.031 | random=0.964
+2025-08-28 20:16:54,195 - INFO - Training RL agent after episode 1 with 2485 training samples
+2025-08-28 20:16:54,497 - INFO - Episode 1 completed. Weights saved: ep1_20250828_201654_weights.pth
+2025-08-28 20:16:54,497 - INFO - === EPISODE 2 STARTED ===
+2025-08-28 20:16:54,498 - INFO - Loading weights: ep1_20250828_201654_weights.pth
+2025-08-28 20:16:54,557 - INFO - Auction 2: participants=12, credits=1000, type=listone, per_ruolo=True
+2025-08-28 20:16:54,602 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:16:57,927 - INFO - Auction 2 weighted results (w=1.000): RL=0.728 | cap=1.398 | cap=2.026 | dynamic=0.719 | dynamic=1.306 | random=1.218
+2025-08-28 20:16:57,927 - INFO - Training RL agent after episode 2 with 85 training samples
+2025-08-28 20:16:57,945 - INFO - Episode 2 completed. Weights saved: ep2_20250828_201657_weights.pth
+2025-08-28 20:16:57,946 - INFO - === EPISODE 3 STARTED ===
+2025-08-28 20:16:57,946 - INFO - Loading weights: ep2_20250828_201657_weights.pth
+2025-08-28 20:16:57,997 - INFO - Auction 3: participants=10, credits=10000, type=chiamata, per_ruolo=True
+2025-08-28 20:16:58,019 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:18:01,012 - INFO - Auction 3 weighted results (w=0.833): RL=1.332 | cap=2.055 | cap=1.820 | dynamic=2.013 | dynamic=1.950 | random=1.531
+2025-08-28 20:18:01,012 - INFO - Training RL agent after episode 3 with 3331 training samples
+2025-08-28 20:18:01,228 - INFO - Episode 3 completed. Weights saved: ep3_20250828_201801_weights.pth
+2025-08-28 20:18:01,228 - INFO - === EPISODE 4 STARTED ===
+2025-08-28 20:18:01,229 - INFO - Loading weights: ep3_20250828_201801_weights.pth
+2025-08-28 20:18:01,278 - INFO - Auction 4: participants=10, credits=1000, type=chiamata, per_ruolo=False
+2025-08-28 20:18:01,300 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:18:10,724 - INFO - Auction 4 weighted results (w=0.833): RL=2.359 | cap=1.855 | cap=1.268 | dynamic=2.033 | dynamic=2.081 | random=2.400
+2025-08-28 20:18:10,725 - INFO - Training RL agent after episode 4 with 631 training samples
+2025-08-28 20:18:10,876 - INFO - Episode 4 completed. Weights saved: ep4_20250828_201810_weights.pth
+2025-08-28 20:18:10,876 - INFO - === EPISODE 5 STARTED ===
+2025-08-28 20:18:10,876 - INFO - Loading weights: ep4_20250828_201810_weights.pth
+2025-08-28 20:18:10,926 - INFO - Auction 5: participants=12, credits=10000, type=chiamata, per_ruolo=True
+2025-08-28 20:18:10,958 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:19:09,395 - INFO - Auction 5 weighted results (w=1.000): RL=1.380 | cap=2.002 | cap=2.312 | dynamic=2.112 | dynamic=2.128 | random=1.661
+2025-08-28 20:19:09,395 - INFO - Training RL agent after episode 5 with 2468 training samples
+2025-08-28 20:19:09,552 - INFO - Episode 5 completed. Weights saved: ep5_20250828_201909_weights.pth
+2025-08-28 20:19:09,552 - INFO - === EPISODE 6 STARTED ===
+2025-08-28 20:19:09,553 - INFO - Loading weights: ep5_20250828_201909_weights.pth
+2025-08-28 20:19:09,617 - INFO - Auction 6: participants=10, credits=500, type=listone, per_ruolo=False
+2025-08-28 20:19:09,644 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:19:12,705 - INFO - Auction 6 weighted results (w=0.833): RL=0.474 | cap=1.409 | cap=1.022 | dynamic=0.616 | dynamic=1.437 | random=1.007
+2025-08-28 20:19:12,705 - INFO - Training RL agent after episode 6 with 143 training samples
+2025-08-28 20:19:12,724 - INFO - Episode 6 completed. Weights saved: ep6_20250828_201912_weights.pth
+2025-08-28 20:19:12,724 - INFO - === EPISODE 7 STARTED ===
+2025-08-28 20:19:12,725 - INFO - Loading weights: ep6_20250828_201912_weights.pth
+2025-08-28 20:19:12,777 - INFO - Auction 7: participants=8, credits=1000, type=chiamata, per_ruolo=False
+2025-08-28 20:19:12,799 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:19:27,289 - INFO - Auction 7 weighted results (w=0.667): RL=1.726 | cap=1.582 | cap=2.100 | dynamic=1.730 | dynamic=1.814 | random=2.038
+2025-08-28 20:19:27,289 - INFO - Training RL agent after episode 7 with 881 training samples
+2025-08-28 20:19:27,390 - INFO - Episode 7 completed. Weights saved: ep7_20250828_201927_weights.pth
+2025-08-28 20:19:27,390 - INFO - === EPISODE 8 STARTED ===
+2025-08-28 20:19:27,392 - INFO - Loading weights: ep7_20250828_201927_weights.pth
+2025-08-28 20:19:27,484 - INFO - Auction 8: participants=12, credits=10000, type=listone, per_ruolo=True
+2025-08-28 20:19:27,517 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:19:42,353 - INFO - Auction 8 weighted results (w=1.000): RL=0.742 | cap=1.785 | cap=2.276 | dynamic=0.835 | dynamic=0.961 | random=0.865
+2025-08-28 20:19:42,353 - INFO - Training RL agent after episode 8 with 503 training samples
+2025-08-28 20:19:42,391 - INFO - Episode 8 completed. Weights saved: ep8_20250828_201942_weights.pth
+2025-08-28 20:19:42,392 - INFO - === EPISODE 9 STARTED ===
+2025-08-28 20:19:42,392 - INFO - Loading weights: ep8_20250828_201942_weights.pth
+2025-08-28 20:19:42,441 - INFO - Auction 9: participants=8, credits=500, type=random, per_ruolo=True
+2025-08-28 20:19:42,466 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:19:49,541 - INFO - Auction 9 weighted results (w=0.667): RL=0.679 | cap=2.570 | cap=2.126 | dynamic=1.075 | dynamic=0.991 | random=0.704
+2025-08-28 20:19:49,541 - INFO - Training RL agent after episode 9 with 485 training samples
+2025-08-28 20:19:49,580 - INFO - Episode 9 completed. Weights saved: ep9_20250828_201949_weights.pth
+2025-08-28 20:19:49,580 - INFO - === EPISODE 10 STARTED ===
+2025-08-28 20:19:49,580 - INFO - Loading weights: ep9_20250828_201949_weights.pth
+2025-08-28 20:19:49,645 - INFO - Auction 10: participants=12, credits=10000, type=random, per_ruolo=False
+2025-08-28 20:19:49,733 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:20:10,151 - INFO - Auction 10 weighted results (w=1.000): RL=1.113 | cap=1.935 | cap=1.085 | dynamic=0.779 | dynamic=0.926 | random=1.220
+2025-08-28 20:20:10,152 - INFO - Training RL agent after episode 10 with 765 training samples
+2025-08-28 20:20:10,208 - INFO - Episode 10 completed. Weights saved: ep10_20250828_202010_weights.pth
+2025-08-28 20:20:10,208 - INFO - === EPISODE 11 STARTED ===
+2025-08-28 20:20:10,209 - INFO - Loading weights: ep10_20250828_202010_weights.pth
+2025-08-28 20:20:10,257 - INFO - Auction 11: participants=8, credits=500, type=listone, per_ruolo=True
+2025-08-28 20:20:10,284 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:20:16,718 - INFO - Auction 11 weighted results (w=0.667): RL=0.356 | cap=2.901 | cap=1.658 | dynamic=0.795 | dynamic=1.907 | random=0.470
+2025-08-28 20:20:16,718 - INFO - Training RL agent after episode 11 with 415 training samples
+2025-08-28 20:20:16,751 - INFO - Episode 11 completed. Weights saved: ep11_20250828_202016_weights.pth
+2025-08-28 20:20:16,751 - INFO - === EPISODE 12 STARTED ===
+2025-08-28 20:20:16,752 - INFO - Loading weights: ep11_20250828_202016_weights.pth
+2025-08-28 20:20:16,806 - INFO - Auction 12: participants=6, credits=500, type=random, per_ruolo=False
+2025-08-28 20:20:16,841 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:20:18,243 - INFO - Auction 12 weighted results (w=0.500): RL=0.465 | cap=0.821 | cap=1.065 | dynamic=0.563 | dynamic=1.000 | random=0.712
+2025-08-28 20:20:18,244 - INFO - Training RL agent after episode 12 with 71 training samples
+2025-08-28 20:20:18,319 - INFO - Episode 12 completed. Weights saved: ep12_20250828_202018_weights.pth
+2025-08-28 20:20:18,319 - INFO - === EPISODE 13 STARTED ===
+2025-08-28 20:20:18,321 - INFO - Loading weights: ep12_20250828_202018_weights.pth
+2025-08-28 20:20:18,443 - INFO - Auction 13: participants=10, credits=1000, type=random, per_ruolo=True
+2025-08-28 20:20:18,530 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:20:32,510 - INFO - Auction 13 weighted results (w=0.833): RL=0.925 | cap=2.367 | cap=1.327 | dynamic=0.876 | dynamic=1.058 | random=0.808
+2025-08-28 20:20:32,510 - INFO - Training RL agent after episode 13 with 903 training samples
+2025-08-28 20:20:32,579 - INFO - Episode 13 completed. Weights saved: ep13_20250828_202032_weights.pth
+2025-08-28 20:20:32,579 - INFO - === EPISODE 14 STARTED ===
+2025-08-28 20:20:32,580 - INFO - Loading weights: ep13_20250828_202032_weights.pth
+2025-08-28 20:20:32,636 - INFO - Auction 14: participants=6, credits=10000, type=listone, per_ruolo=True
+2025-08-28 20:20:32,716 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:20:37,375 - INFO - Auction 14 weighted results (w=0.500): RL=0.407 | cap=1.098 | cap=1.258 | dynamic=0.734 | dynamic=0.760 | random=0.290
+2025-08-28 20:20:37,375 - INFO - Training RL agent after episode 14 with 189 training samples
+2025-08-28 20:20:37,393 - INFO - Episode 14 completed. Weights saved: ep14_20250828_202037_weights.pth
+2025-08-28 20:20:37,393 - INFO - === EPISODE 15 STARTED ===
+2025-08-28 20:20:37,394 - INFO - Loading weights: ep14_20250828_202037_weights.pth
+2025-08-28 20:20:37,448 - INFO - Auction 15: participants=6, credits=10000, type=random, per_ruolo=True
+2025-08-28 20:20:37,471 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:21:43,128 - INFO - Auction 15 weighted results (w=0.500): RL=0.273 | cap=1.586 | cap=1.524 | dynamic=0.876 | dynamic=0.913 | random=0.479
+2025-08-28 20:21:43,128 - INFO - Training RL agent after episode 15 with 4979 training samples
+2025-08-28 20:21:43,553 - INFO - Episode 15 completed. Weights saved: ep15_20250828_202143_weights.pth
+2025-08-28 20:21:43,553 - INFO - === EPISODE 16 STARTED ===
+2025-08-28 20:21:43,554 - INFO - Loading weights: ep15_20250828_202143_weights.pth
+2025-08-28 20:21:43,604 - INFO - Auction 16: participants=6, credits=1000, type=random, per_ruolo=False
+2025-08-28 20:21:43,631 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:21:46,858 - INFO - Auction 16 weighted results (w=0.500): RL=0.832 | cap=0.799 | cap=1.053 | dynamic=0.481 | dynamic=0.674 | random=0.608
+2025-08-28 20:21:46,858 - INFO - Training RL agent after episode 16 with 201 training samples
+2025-08-28 20:21:46,884 - INFO - Episode 16 completed. Weights saved: ep16_20250828_202146_weights.pth
+2025-08-28 20:21:46,885 - INFO - === EPISODE 17 STARTED ===
+2025-08-28 20:21:46,885 - INFO - Loading weights: ep16_20250828_202146_weights.pth
+2025-08-28 20:21:46,945 - INFO - Auction 17: participants=8, credits=10000, type=random, per_ruolo=True
+2025-08-28 20:21:46,977 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:23:23,666 - INFO - Auction 17 weighted results (w=0.667): RL=0.471 | cap=1.208 | cap=1.786 | dynamic=0.908 | dynamic=1.279 | random=0.514
+2025-08-28 20:23:23,667 - INFO - Training RL agent after episode 17 with 6912 training samples
+2025-08-28 20:23:24,126 - INFO - Episode 17 completed. Weights saved: ep17_20250828_202324_weights.pth
+2025-08-28 20:23:24,126 - INFO - === EPISODE 18 STARTED ===
+2025-08-28 20:23:24,127 - INFO - Loading weights: ep17_20250828_202324_weights.pth
+2025-08-28 20:23:24,214 - INFO - Auction 18: participants=8, credits=500, type=chiamata, per_ruolo=False
+2025-08-28 20:23:24,304 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:23:39,363 - INFO - Auction 18 weighted results (w=0.667): RL=1.711 | cap=1.565 | cap=1.891 | dynamic=1.848 | dynamic=1.779 | random=2.024
+2025-08-28 20:23:39,363 - INFO - Training RL agent after episode 18 with 759 training samples
+2025-08-28 20:23:39,553 - INFO - Episode 18 completed. Weights saved: ep18_20250828_202339_weights.pth
+2025-08-28 20:23:39,553 - INFO - === EPISODE 19 STARTED ===
+2025-08-28 20:23:39,555 - INFO - Loading weights: ep18_20250828_202339_weights.pth
+2025-08-28 20:23:39,724 - INFO - Auction 19: participants=10, credits=10000, type=listone, per_ruolo=True
+2025-08-28 20:23:39,816 - INFO - Weights loaded successfully into RL agent
+2025-08-28 20:24:29,354 - INFO - Training interrupted by user after 18 episodes
+2025-08-28 20:24:29,354 - INFO - Creating final training plot...
+2025-08-28 20:24:30,487 - INFO - Final plot saved: training_progress_no_spin_ep18.png
+2025-08-28 20:24:30,495 - INFO - === TRAINING SESSION COMPLETED === Total episodes: 18, Total auctions: 18
