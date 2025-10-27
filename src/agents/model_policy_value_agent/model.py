@@ -4,7 +4,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 import os
 
-class Linear_QNet(nn.Module):
+class PolicyValueNet(nn.Module):
     def __init__(self, input_size = 51, hidden_size_1 = 256, hidden_size_2 = 128):
         super().__init__()
         self.linear1 = nn.Linear(input_size, hidden_size_1)
@@ -35,18 +35,14 @@ class Linear_QNet(nn.Module):
                 self.load_state_dict(torch.load(weights_file))
 
 
-    def forward(self, x):
-        # Efficient tensor conversion - avoid unnecessary copying if already a tensor
-        if isinstance(x, torch.Tensor):
-            input_tensor = x.detach().clone().to(torch.float32)
-        else:
-            input_tensor = torch.tensor(x, dtype=torch.float32)
+    def forward(self, input_tensor):
 
         x = F.relu(self.linear1(input_tensor))
         x = self.dropout1(x)  
         x = F.relu(self.linear2(x))
         x = self.dropout2(x)  
         policy = F.softmax(self.policy(x), dim=-1)
+        #TODO: Check if sigmoid is appropriate for value output and if it should be linked with the final reward 
         value = F.sigmoid(self.value(x))
         return policy, value
 
@@ -67,39 +63,3 @@ class Linear_QNet(nn.Module):
 
         torch.save(self.state_dict(), save_path)
         print(f"Model weights saved to {save_path}")
-
-
-class QTrainer:
-    def __init__(self, model, lr, gamma):
-        self.lr = lr
-        self.gamma = gamma
-        self.model = model
-        self.optimizer = optim.Adam(model.parameters(), lr=self.lr)
-        self.criterion = nn.MSELoss()
-
-    def train_step(self, all_features0, output_probability, reward):
-        all_features0 = torch.tensor(all_features0, dtype=torch.float)
-        output_probability = torch.tensor(output_probability, dtype=torch.float)
-        reward = torch.tensor(reward, dtype=torch.float)
-        # (n, x)
-
-        if len(all_features0.shape) == 1:
-            # (1, x)
-            all_features0 = torch.unsqueeze(all_features0, 0)
-            output_probability = torch.unsqueeze(output_probability, 0)
-            reward = torch.unsqueeze(reward, 0)
-
-        # 1: predicted Q values with current state
-        pred = self.model(all_features0)
-
-        # 2: Create target - use actual reward as target Q-value
-        target = pred.clone()
-        for idx in range(len(all_features0)):
-            # Simple approach: Q(state, action) = actual_reward
-            target[idx][torch.argmax(output_probability[idx]).item()] = reward[idx]
-    
-        # 3: Train to match actual rewards
-        self.optimizer.zero_grad()
-        loss = self.criterion(target, pred)
-        loss.backward()
-        self.optimizer.step()

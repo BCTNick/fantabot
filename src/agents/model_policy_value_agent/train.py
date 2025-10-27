@@ -14,9 +14,64 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import numpy as np
 import torch
+import torch.nn as nn
+import torch.optim as optim
 import os
 import logging
 from datetime import datetime
+
+model = PolicyValueNet() #if needed otherwise use stored things from agent
+lr = 1e-3
+value_coeff = 0.5
+enthropy_coeff = 0.01
+optimizer = optim.Adam(model.parameters(), lr=lr)
+criterion = nn.MSELoss()
+
+def compute_loss(self, states, actions, final_reward):
+
+    policies, values = self.model.forward(states)
+    
+    #TODO: understand
+    # --- Policy loss (REINFORCE with baseline) ---
+    log_probs = torch.log(torch.gather(policies, 1, actions.unsqueeze(1))).squeeze()
+    advantages = final_reward - values.squeeze().detach()
+    policy_loss = -(log_probs * advantages).mean()
+
+    # --- Value loss ---
+    value_loss = F.mse_loss(values.squeeze(), torch.tensor(final_reward).expand_as(values.squeeze()))
+
+    # --- Entropy regularization (for exploration) ---
+    entropy = -(policies * torch.log(policies + 1e-8)).sum(dim=1).mean()
+
+    # --- Total loss ---
+    total_loss = policy_loss + self.value_coeff * value_loss - self.entropy_coeff * entropy
+
+    return total_loss, policy_loss.item(), value_loss.item(), entropy.item()
+
+def train_episode(self, episode):
+    """
+    episode: list of (state, action), and final reward separately.
+    """
+    states = torch.stack([torch.tensor(s, dtype=torch.float32) for s, _ in episode])
+    actions = torch.tensor([a for _, a in episode], dtype=torch.long)
+    final_reward = episode[-1][2] if len(episode[0]) == 3 else None  # optional
+
+    # Assume final reward provided separately
+    total_reward = final_reward if final_reward is not None else self.last_reward
+
+    self.optimizer.zero_grad()
+    total_loss, policy_loss, value_loss, entropy = self.compute_loss(states, actions, total_reward)
+    total_loss.backward()
+    self.optimizer.step()
+
+    return {
+        "total_loss": total_loss.item(),
+        "policy_loss": policy_loss,
+        "value_loss": value_loss,
+        "entropy": entropy,
+        "reward": total_reward
+    }
+    
 
 def refresh_agents():
     num_partecipants = random.choice([6, 8, 10, 12])
@@ -41,6 +96,7 @@ def refresh_agents():
         random.shuffle(agents)
     return agents
 
+#TODO: adapt the new final plot to the new model
 def create_final_plot(agent_scores_history, agent_bestxi_history, auction_numbers, agent_colors, n_episodes):
     """Create comprehensive final plot with all agents' scores and bestxi"""
     try:
@@ -88,6 +144,7 @@ def create_final_plot(agent_scores_history, agent_bestxi_history, auction_number
         print(f"Error creating final plot: {e}")
         return None
 
+# TODO: redesign the saving of weights and their loading process
 def find_most_recent_weights(no_spin_dir):
     """Find the most recent .pth weights file in the no_spin directory"""
     try:
@@ -110,6 +167,7 @@ def find_most_recent_weights(no_spin_dir):
         print(f"Error finding most recent weights: {e}")
         return None
 
+# TODO: redisgn this too, it should be new every time you redeseign the NN architecture
 def find_last_episode_number(no_spin_dir):
     """Find the last completed episode number from weight files in no_spin directory"""
     try:
@@ -169,6 +227,7 @@ def setup_logging(log_dir):
     
     return logger, log_filepath
 
+# TODO: redesign in the way that 1 episode = 1 auction
 def train():
     # Training 
     episode_auctions = 1

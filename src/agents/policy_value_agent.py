@@ -57,10 +57,11 @@ class PolicyValueAgent(Agent):
         
         self.model = Linear_QNet(input_size = 51, hidden_size_1 = 256, hidden_size_2 = 128, output_size = 1)
         self.model.load_weights(custom_weights=self.weights)
-        self.trainer = QTrainer(model=self.model, lr=0.01, gamma=self.gamma)
-        self.all_features0_store = []
-        self.policy_store = []
-        self.value_store = []
+        self.states_store = []
+        self.policies_store = []
+        self.values_store = []
+        self.actions_store = []
+        self.last_player = None
         self.num_decisions = 0
 
     def initialize(self, players: List[Player], slots: Slots, initial_credits: int, num_participants: int):
@@ -77,9 +78,9 @@ class PolicyValueAgent(Agent):
         best_players_overall = sorted(players, key=lambda p: p.evaluation, reverse=True)[:best_players_count]
         self.sum_best_overall = sum(p.standardized_evaluation for p in best_players_overall)
 
+    # TODO : understand if it works: Print it at the end of every player in the single_auction setup
     def get_auction_progress(self, all_agents: List[Agent]) -> float:
 
-        # TODO : understand if it works, especially the standardization part
         squad_evaluations = 0
         for agent in all_agents:
             squad_evaluations += agent.squad.objective(bestxi=False, standardized=True)
@@ -133,10 +134,11 @@ class PolicyValueAgent(Agent):
                 # Padding with zeros for non-existent agents
                 other_agent_features.extend([0.0, 0.0, 0.0])
         
-        # Combine all features
+        # Combine all features and convert to tensor
         all_features = base_features + other_agent_features
+        state = torch.tensor(all_features, dtype=torch.float32)
 
-        return all_features
+        return state
 
     def make_offer_decision(self, current_player: Player, current_price: int, highest_bidder: str, player_list: List[Player], other_agents: List[Agent]) -> str:
         
@@ -151,14 +153,25 @@ class PolicyValueAgent(Agent):
             m = torch.distributions.Categorical(probs)        
         action = "offer_+1" if m.sample() > 0.5 else "no_offer"
 
-        # update the model if on training 
+        # Store decision data if in training mode
         if self.mode == "training":
-            try:
-                #TODO: Store everything
 
+            #TODO: if its the same player as last decision, overwrite the last decision of the store with the new decision
+            if current_player == self.last_player:
+                #TODO: they all are lists of tensors but i dont know if its right
+                self.states_store[-1] = state
+                self.policies_store[-1] = probs[0]
+                self.values_store[-1] = value
+                self.actions_store[-1] = m
+
+            else:
+                #TODO: they all are lists of tensors but i dont know if its right
+                self.states_store.append(state)
+                self.policies_store.append(probs[0]) 
+                self.values_store.append(value) 
+                self.actions_store.append(m)  
                 self.num_decisions += 1
+                #TODO: the reward has to be finalized at the end of the auction in a separate environment (train.py)
 
-            except Exception as e:
-                logger.error(f"Error in training mode: {e}")
-
+            self.last_player = current_player
         return action
