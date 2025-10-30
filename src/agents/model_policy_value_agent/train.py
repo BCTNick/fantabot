@@ -1,13 +1,15 @@
 import sys
 import os
+
+from prova_policy_value_network import PolicyValueNet
 sys.path.append(os.path.join(os.path.dirname(__file__), '../../..'))
 
+from agents.policy_value_agent import PolicyValueAgent
 from src.data_loader import load_players_from_excel
 from src.models import Slots
 from src.agents.agent_class import RandomAgent
 from src.agents.cap_based_agent import CapAgent
 from src.agents.dynamic_cap_based_agent import DynamicCapAgent
-from src.agents.rl_deep_agent import RLDeepAgent
 from src.auction import Auction
 import random
 import matplotlib.pyplot as plt
@@ -16,37 +18,10 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import torch.nn.functional as F
 import os
 import logging
 from datetime import datetime
-
-model = PolicyValueNet() #if needed otherwise use stored things from agent
-lr = 1e-3
-value_coeff = 0.5
-enthropy_coeff = 0.01
-optimizer = optim.Adam(model.parameters(), lr=lr)
-criterion = nn.MSELoss()
-
-def compute_loss(self, states, actions, final_reward):
-
-    policies, values = self.model.forward(states)
-    
-    #TODO: understand
-    # --- Policy loss (REINFORCE with baseline) ---
-    log_probs = torch.log(torch.gather(policies, 1, actions.unsqueeze(1))).squeeze()
-    advantages = final_reward - values.squeeze().detach()
-    policy_loss = -(log_probs * advantages).mean()
-
-    # --- Value loss ---
-    value_loss = F.mse_loss(values.squeeze(), torch.tensor(final_reward).expand_as(values.squeeze()))
-
-    # --- Entropy regularization (for exploration) ---
-    entropy = -(policies * torch.log(policies + 1e-8)).sum(dim=1).mean()
-
-    # --- Total loss ---
-    total_loss = policy_loss + self.value_coeff * value_loss - self.entropy_coeff * entropy
-
-    return total_loss, policy_loss.item(), value_loss.item(), entropy.item()
 
 def train_episode(self, episode):
     """
@@ -75,7 +50,7 @@ def train_episode(self, episode):
 
 def refresh_agents():
     num_partecipants = random.choice([6, 8, 10, 12])
-    agents = [RLDeepAgent("rldeep_to_train", "training"),
+    agents = [PolicyValueAgent("agent_to_train", "training"),
             CapAgent(agent_id="cap_bestx1_aggressive", cap_strategy="bestxi_based", bestxi_budget=0.99),
             CapAgent(agent_id="cap_tier", cap_strategy="tier_based"),
             DynamicCapAgent(agent_id="dynamic_cap_bestx1_balanced", cap_strategy="bestxi_based", bestxi_budget=0.95),
@@ -200,6 +175,47 @@ def find_last_episode_number(no_spin_dir):
     except Exception as e:
         print(f"Error finding last episode number: {e}")
         return 0
+    
+def get_reward(agent_to_train, auction):
+    #TODO: get the reward based on the list of players: [-1,1] with -1 being no player bought and 1 being all the best players bought (weight by bestxi and not)
+    
+    # # Get all players by role
+    # gks = sorted([p for p in auction.players if p.role == "GK"], 
+    #              key=lambda x: x.standardized_evaluation, reverse=True)
+    # defs = sorted([p for p in auction.players if p.role == "DEF"], 
+    #               key=lambda x: x.standardized_evaluation, reverse=True)
+    # mids = sorted([p for p in auction.players if p.role == "MID"], 
+    #               key=lambda x: x.standardized_evaluation, reverse=True)
+    # atts = sorted([p for p in auction.players if p.role == "ATT"], 
+    #               key=lambda x: x.standardized_evaluation, reverse=True)
+
+    # # Calculate best possible XI (1 GK + 3 DEF + 3 MID + 3 ATT)
+    # best_possible_xi = sum([
+    #     gks[0].standardized_evaluation if gks else 0,  # Best GK
+    #     *[p.standardized_evaluation for p in defs[:3]],  # Best 3 DEF
+    #     *[p.standardized_evaluation for p in mids[:3]],  # Best 3 MID
+    #     *[p.standardized_evaluation for p in atts[:3]]   # Best 3 ATT
+    # ])
+
+    # # Calculate second best possible squad based on agent slots
+    # best_possible_reserves = sum([
+    #     *[p.standardized_evaluation for p in gks[1:agent.slots.gk]],     # From 2nd GK to max slots
+    #     *[p.standardized_evaluation for p in defs[3:agent.slots.def_]],  # From 4th DEF to max slots
+    #     *[p.standardized_evaluation for p in mids[3:agent.slots.mid]],   # From 4th MID to max slots
+    #     *[p.standardized_evaluation for p in atts[3:agent.slots.att]]    # From 4th ATT to max slots
+    # ])
+
+    # bestxi = agent.squad.objective(bestxi=True, standardized=True)/ best_possible_xi 
+    # best_reserves = (agent.squad.objective(bestxi=False, standardized=True)-agent.squad.objective(bestxi=True, standardized=True))/ best_possible_reserves
+
+    # TODO: Understand if you want to calculate participant weight: if yes, normalize to 12 participants as baseline
+    scores = []
+    for agent in auction.agents:
+        score = agent.squad.objective(bestxi=True, standardized=True)*0.9+agent.squad.objective(bestxi=False, standardized=True)*0.1
+        scores.append(score)
+
+    reward = 2 * (agent_to_train.squad.objective(bestxi=True, standardized=True)*0.9+agent_to_train.squad.objective(bestxi=False, standardized=True)*0.1-min(scores)) / (max(scores)-min(scores)+1e-8) - 1  # Normalize to [-1, 1]
+    return reward
 
 def setup_logging(log_dir):
     """Setup logging for the training session"""
@@ -227,11 +243,7 @@ def setup_logging(log_dir):
     
     return logger, log_filepath
 
-# TODO: redesign in the way that 1 episode = 1 auction
 def train():
-    # Training 
-    episode_auctions = 1
-
     # Create round folder for this training session
     base_weights_dir = os.path.join(os.path.dirname(__file__), 'weights')
     current_round_dir = os.path.join(base_weights_dir, f'no_spin')
@@ -261,19 +273,12 @@ def train():
         logger.info("Starting new training session")
         
     logger.info(f"Training directory: {current_round_dir}")
-    logger.info(f"Episode auctions per episode: {episode_auctions}")
-    logger.info(f"Starting from episode {n_episodes + 1}, auction counter will start from {last_episode * episode_auctions}")
+    logger.info(f"Starting from episode {n_episodes + 1}")
 
     # Tracking for plotting and comparing
-    agent_scores_history = {}  # {agent_id: [scores]}
-    agent_bestxi_history = {}  # {agent_id: [bestxi_objectives]}
-    auction_numbers = []
-    episode_rl_scores = []
-    episode_rl_bestxi = []
-
+    agent_score_history = {}  # {agent_id: [scores]}
 
     # Tracking for plotting and visualization
-    auction_counter = last_episode * episode_auctions  # Continue auction numbering from where we left off
     agent_colors = {
         "rldeep_to_train": "#FF0000",           # Red
         "cap_bestx1_aggressive": "#00FF00",     # Green  
@@ -286,171 +291,139 @@ def train():
     print("🚀 Training started! Press Ctrl+C to stop gracefully.")
     print("📁 Create 'STOP' or 'STOP.txt' file in current directory to stop after current episode.")
     
-    try:
-        while True:
-            # Check for stop file (both STOP and STOP.txt)
-            if os.path.exists("STOP") or os.path.exists("STOP.txt"):
-                print("🛑 STOP file detected. Finishing current episode and exiting...")
-                # Clean up both possible stop files
-                if os.path.exists("STOP"):
-                    os.remove("STOP")
-                if os.path.exists("STOP.txt"):
-                    os.remove("STOP.txt")
-                break
-
-            # Store stuff for episode
-            all_features0_store = []
-            output_probability_store = []
-            reward_store = []
+    while True:
+        # Check for stop file (both STOP and STOP.txt)
+        if os.path.exists("STOP") or os.path.exists("STOP.txt"):
+            print("🛑 STOP file detected. Finishing current episode and exiting...")
+            # Clean up both possible stop files
+            if os.path.exists("STOP"):
+                os.remove("STOP")
+            if os.path.exists("STOP.txt"):
+                os.remove("STOP.txt")
+            break
 
             # Log episode start
-            logger.info(f"=== EPISODE {n_episodes + 1} STARTED ===")
+            n_episodes += 1
+            logger.info(f"=== EPISODE {n_episodes} STARTED ===")
             
             # Load most recent weights at the start of each episode
             most_recent_weights = find_most_recent_weights(current_round_dir)
-            if most_recent_weights and (n_episodes > 0 or last_episode > 0):  # Load weights if we have previous episodes
-                print(f"🔄 Loading most recent weights: {os.path.basename(most_recent_weights)}")
+            if most_recent_weights and n_episodes > 1:  # Load weights if we have previous episodes
                 logger.info(f"Loading weights: {os.path.basename(most_recent_weights)}")
             else:
                 logger.info("Using random weights (first episode)")
 
-            for _ in range(episode_auctions):
 
-                # Randomly select auction configuration
-                slots = Slots() #TODO: randomize if sure the thing is slots proof
-                agents = refresh_agents()  
-                listone = load_players_from_excel()
-                initial_credits = random.choice([500, 1000, 10000])
-                auction_type = random.choice(["chiamata", "listone", "random"]) 
-                per_ruolo = random.choice([True, False])
-                
-                # Log auction configuration
-                num_participants = len(agents)
-                logger.info(f"Auction {auction_counter + 1}: participants={num_participants}, credits={initial_credits}, type={auction_type}, per_ruolo={per_ruolo}")
-
-                # Create and run auction with stored configuration
-                auction = Auction(slots, agents, listone, initial_credits)
-
-                # Load weights into RL agent if available
-                if most_recent_weights and (n_episodes > 0 or last_episode > 0):
-                    rl_agent = next(agent for agent in agents if isinstance(agent, RLDeepAgent) and agent.agent_id == "rldeep_to_train")
-                    try:
-                        rl_agent.model.load_state_dict(torch.load(most_recent_weights))
-                        if _ == 0:  # Only print once per episode
-                            print(f"✅ Loaded weights into RL agent: {os.path.basename(most_recent_weights)}")
-                            logger.info(f"Weights loaded successfully into RL agent")
-                    except Exception as e:
-                        print(f"❌ Error loading weights: {e}")
-                        logger.error(f"Failed to load weights: {e}")
-
-                auction.run_all(
-                    auction_type=auction_type,
-                    per_ruolo=per_ruolo,
-                    verbose=False
-                )
-
-                # Extract the agent to train 
-                rldeep_agent = next(agent for agent in agents if isinstance(agent, RLDeepAgent) and agent.agent_id == "rldeep_to_train")
-
-                # remember
-                all_features0_store.extend(rldeep_agent.all_features0_store)
-                output_probability_store.extend(rldeep_agent.output_probability_store)
-                reward_store.extend(rldeep_agent.reward_store)
-
-                # Track auction number
-                auction_counter += 1
-                auction_numbers.append(auction_counter)
-
-                # Collect scores and bestxi objectives for the 6 fixed agents only
-                scores = {}
-                bestxi_objectives = {}
-                
-                # Calculate participant weight: normalize to 12 participants as baseline
-                participant_weight = num_participants / 12.0
-                
-                # Define the 6 fixed agent IDs
-                fixed_agent_ids = ["rldeep_to_train", "cap_bestx1_aggressive", "cap_tier", 
-                                  "dynamic_cap_bestx1_balanced", "dynamic_cap_bestx1_aggressive", "random_1"]
-                
-                for agent in agents:
-                    # Only process the 6 fixed agents
-                    if agent.agent_id in fixed_agent_ids:
-                        # Get raw score and bestxi objective
-                        raw_agent_score = rldeep_agent.get_score(agent, rldeep_agent.auction_progress)
-                        raw_bestxi_objective = agent.squad.objective(bestxi=True, standardized=True)
-                        
-                        # Apply participant weighting
-                        weighted_agent_score = raw_agent_score * participant_weight
-                        weighted_bestxi_objective = raw_bestxi_objective * participant_weight
-                        
-                        scores[agent.agent_id] = weighted_agent_score
-                        bestxi_objectives[agent.agent_id] = weighted_bestxi_objective
-
-                        
-                        # Initialize history if first time seeing this agent
-                        if agent.agent_id not in agent_scores_history:
-                            agent_scores_history[agent.agent_id] = []
-                            agent_bestxi_history[agent.agent_id] = []
-                        
-                        # Store the weighted values
-                        agent_scores_history[agent.agent_id].append(weighted_agent_score)
-                        agent_bestxi_history[agent.agent_id].append(weighted_bestxi_objective)
-                        
-                        # Track RL agent performance for episode comparison
-                        if agent.agent_id == "rldeep_to_train":
-                            episode_rl_scores.append(weighted_agent_score)
-                            episode_rl_bestxi.append(weighted_bestxi_objective)
-                
-                # Print scores after each auction - RL first, then others (weighted scores)
-                print(f"Auction {auction_counter} (w={participant_weight:.2f}): RL={agent_scores_history['rldeep_to_train'][-1]:.3f} | ", end="")
-                other_scores = []
-                log_scores = [f"RL={agent_scores_history['rldeep_to_train'][-1]:.3f}"]
-                for agent_id in ["cap_bestx1_aggressive", "cap_tier", "dynamic_cap_bestx1_balanced", "dynamic_cap_bestx1_aggressive", "random_1"]:
-                    if agent_id in agent_scores_history and len(agent_scores_history[agent_id]) > 0:
-                        score_str = f"{agent_id.split('_')[0]}={agent_scores_history[agent_id][-1]:.3f}"
-                        other_scores.append(score_str)
-                        log_scores.append(score_str)
-                print(" | ".join(other_scores))
-                
-                # Log auction results with weight info
-                logger.info(f"Auction {auction_counter} weighted results (w={participant_weight:.3f}): {' | '.join(log_scores)}")
-
-            # Train the RL agent after the episode finishes and save it
-            n_episodes += 1
-            logger.info(f"Training RL agent after episode {n_episodes} with {len(all_features0_store)} training samples")
-            rldeep_agent.trainer.train_step(all_features0_store, output_probability_store, reward_store)
-            current_time = datetime.now()
-            timestamp = current_time.strftime("%Y%m%d_%H%M%S")
-            episode_filename = f"ep{n_episodes}_{timestamp}_weights.pth"
-            episode_filepath = os.path.join(current_round_dir, episode_filename)
-            rldeep_agent.model.save(episode_filepath)
-            logger.info(f"Episode {n_episodes} completed. Weights saved: {episode_filename}")
+            # Randomly select auction configuration
+            slots = Slots() #TODO: randomize if sure the thing is slots proof
+            agents = refresh_agents()  
+            listone = load_players_from_excel() #TODO: randomize listone if sure the thing is players proof
+            initial_credits = random.choice([500, 1000, 10000])
+            auction_type = random.choice(["chiamata", "listone", "random"]) 
+            per_ruolo = random.choice([True, False])
             
-            
-    except KeyboardInterrupt:
-        print(f"\n🛑 Training interrupted by user after {n_episodes} episodes.")
-        logger.info(f"Training interrupted by user after {n_episodes} episodes")
+            # Log auction configuration
+            logger.info(f"Auction {n_episodes}: participants={len(agents)}, credits={initial_credits}, type={auction_type}, per_ruolo={per_ruolo}")
+
+            # Create and run auction with stored configuration
+            auction = Auction(slots, agents, listone, initial_credits)
+
+            # Extract the agent to train 
+            agent_to_train = next(agent for agent in agents if isinstance(agent, PolicyValueAgent) and agent.agent_id == "agent_to_train")
+
+            # TODO it should get the weights automatically when it is initialized
+            if most_recent_weights and (n_episodes > 1):
+                try:
+                    agent_to_train.model.load_state_dict(torch.load(most_recent_weights))
+                    logger.info(f"Weights loaded successfully into Agent")
+                except Exception as e:
+                    logger.error(f"Failed to load weights: {e}")
+
+            auction.run_all(
+                auction_type=auction_type,
+                per_ruolo=per_ruolo,
+                verbose=False
+            )
         
-    # Create and save final comprehensive plot
-    print(f"📊 Creating final training plot...")
-    logger.info("Creating final training plot...")
-    final_fig = create_final_plot(agent_scores_history, agent_bestxi_history, auction_numbers, agent_colors, n_episodes)
+            
+            # Define the 6 fixed agent IDs
+            fixed_agent_ids = ["agent_to_train", "cap_bestx1_aggressive", "cap_tier", 
+                                "dynamic_cap_bestx1_balanced", "dynamic_cap_bestx1_aggressive", "random_1"]
+            
+            for agent in agents:
+                # Only process the 6 fixed agents
+                if agent.agent_id in fixed_agent_ids:
+                    weighted_score = (agent.squad.objective(bestxi=True, standardized=True)*0.9+agent.squad.objective(bestxi=False, standardized=True)*0.1) * (len(auction.agents) / 12)  
+                    agent_score_history[agent.agent_id].append(weighted_score)
+
+
+            # Print scores after each auction - RL first, then others (weighted scores)
+            logger.info(f"Auction {n_episodes} Results:")
+            other_scores = []
+            log_scores = [f"RL={agent_score_history['agent_to_train'][-1]:.3f}"]
+            for agent_id in ["cap_bestx1_aggressive", "cap_tier", "dynamic_cap_bestx1_balanced", "dynamic_cap_bestx1_aggressive", "random_1"]:
+                if agent_id in agent_score_history and len(agent_score_history[agent_id]) > 0:
+                    score_str = f"{agent_id.split('_')[0]}={agent_score_history[agent_id][-1]:.3f}"
+                    other_scores.append(score_str)
+                    log_scores.append(score_str)
+            logger.info(" | ".join(other_scores))
+
+        # Train the RL agent after the episode finishes and save it
+        logger.info(f"Training RL agent after episode {n_episodes} with {len(all_features0_store)} training samples")
+
+        #TODO: adapt to new train step
+        net = PolicyValueNet()
+        optimizer = optim.Adam(net.parameters(), lr=0.01)
+        reward = get_reward(agent_to_train, auction)
+        R = torch.tensor([reward], dtype=torch.float32)
+
+        # --- Compute losses ---
+        log_probs = agent_to_train.policies_store
+        values = agent_to_train.values_store
+        policy_loss = 0
+        value_loss = 0
+
+        for log_prob, value in zip(log_probs, values):
+            advantage = R - value.detach()
+            policy_loss += -log_prob * advantage
+            value_loss += F.mse_loss(value, R)
+
+        loss = policy_loss + value_loss
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        current_time = datetime.now()
+        timestamp = current_time.strftime("%Y%m%d_%H%M%S")
+        episode_filename = f"ep{n_episodes}_{timestamp}_weights.pth"
+        episode_filepath = os.path.join(current_round_dir, episode_filename)
+        agent_to_train.model.save(episode_filepath)
+        logger.info(f"Episode {n_episodes} completed. Weights saved: {episode_filename}")
+        
+        
+except KeyboardInterrupt:
+    logger.info(f"Training interrupted by user after {n_episodes} episodes")
     
-    if final_fig:
-        final_plot_filename = f'training_progress_no_spin_ep{n_episodes}.png'
-        final_plot_filepath = os.path.join(current_round_dir, final_plot_filename)
-        final_fig.savefig(final_plot_filepath, dpi=300, bbox_inches='tight')
-        print(f"📊 Final plot saved as: {final_plot_filepath}")
-        logger.info(f"Final plot saved: {final_plot_filename}")
-        plt.close(final_fig)  # Close the figure to free memory
-    
-    print("✅ Training completed gracefully.")
-    logger.info(f"=== TRAINING SESSION COMPLETED === Total episodes: {n_episodes}, Total auctions: {auction_counter}")
-    
-    # Close logging handlers
-    for handler in logger.handlers:
-        handler.close()
-        logger.removeHandler(handler)
+# Create and save final comprehensive plot
+logger.info("Creating final training plot...")
+final_fig = create_final_plot(agent_scores_history, agent_bestxi_history, auction_numbers, agent_colors, n_episodes)
+
+if final_fig:
+    final_plot_filename = f'training_progress_no_spin_ep{n_episodes}.png'
+    final_plot_filepath = os.path.join(current_round_dir, final_plot_filename)
+    final_fig.savefig(final_plot_filepath, dpi=300, bbox_inches='tight')
+    print(f"📊 Final plot saved as: {final_plot_filepath}")
+    logger.info(f"Final plot saved: {final_plot_filename}")
+    plt.close(final_fig)  # Close the figure to free memory
+
+print("✅ Training completed gracefully.")
+logger.info(f"=== TRAINING SESSION COMPLETED === Total episodes: {n_episodes}, Total auctions: {auction_counter}")
+
+# Close logging handlers
+for handler in logger.handlers:
+    handler.close()
+    logger.removeHandler(handler)
 
 
 
